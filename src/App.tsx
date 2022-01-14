@@ -7,10 +7,12 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { Observable, useObservable } from "./observable";
 import { getRandomWord, isAWord } from "./words";
 
 const SIZE = 5;
-const ALLOW_NON_WORD_GUESSES = false;
+
+const $allowNonWordGuesses = new Observable(false);
 
 function App() {
   const [answer, setAnswer] = useState(getRandomWord(SIZE));
@@ -18,8 +20,38 @@ function App() {
     setAnswer(getRandomWord(SIZE));
   };
 
-  return <Game key={answer} answer={answer} onRestart={handleRestart} />;
+  const [allowNonWordGuesses, setAllowNonWordGuesses] =
+    useObservable($allowNonWordGuesses);
+
+  return (
+    <div>
+      <Checkbox
+        label="Allow non-word guesses"
+        checked={allowNonWordGuesses}
+        onChange={setAllowNonWordGuesses}
+      />
+      <Game key={answer} answer={answer} onRestart={handleRestart} />
+    </div>
+  );
 }
+
+const Checkbox: React.FC<{
+  label: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}> = ({ label, checked, onChange }) => {
+  const toggle = () => onChange(!checked);
+  return (
+    <div>
+      <label onClick={toggle}>{label}</label>
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={(event) => onChange(event.target.checked)}
+      />
+    </div>
+  );
+};
 
 const Game: React.FC<{
   answer: string;
@@ -60,10 +92,11 @@ const Guess: React.FC<{
   const [guess, setGuess] = useState("");
   const [validating, setValidating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [allowNonWordGuesses] = useObservable($allowNonWordGuesses);
 
   const validate = async (value: string) => {
     setValidating(true);
-    const isValid = ALLOW_NON_WORD_GUESSES || (await isAWord(value));
+    const isValid = allowNonWordGuesses || (await isAWord(value));
     setErrorMessage(isValid ? "" : `"${value}" is not an English word`);
     setValidating(false);
     return isValid;
