@@ -1,19 +1,13 @@
-export async function getRandomWord(size: number) {
-  while (true) {
-    const testWord = _getRandomWord(size);
+export async function getRandomWord(wordBank: string[]) {
+  let tries = 0;
+  while (tries < 10) {
+    tries++;
+    const testWord = chooseRandomWord(wordBank);
     if (await isAWord(testWord)) {
       return testWord;
     } else {
       console.warn(`"${testWord}" is not a word. Looking for another word.`);
     }
-  }
-}
-
-function _getRandomWord(size: number) {
-  if (size === 5) {
-    return chooseRandomWord(fiveLetterWords);
-  } else {
-    throw new Error(`No ${size} letter words available`);
   }
 }
 
@@ -31,7 +25,7 @@ export async function isAWord(word: string) {
 }
 
 // https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt
-const fiveLetterWords = [
+export const fiveLetterWords = [
   "which",
   "there",
   "their",

@@ -9,15 +9,35 @@ import React, {
 } from "react";
 import { unique } from "./array";
 import { Observable, useObservable } from "./observable";
-import { getRandomWord, isAWord } from "./words";
+import { fiveLetterWords, getRandomWord, isAWord } from "./words";
 
 const SIZE = 5;
 
 const $allowNonWordGuesses = new Observable(false);
+const $wordBank = new Observable(fiveLetterWords);
+
+function useAnswer() {
+  const [id, increment] = useReducer<Reducer<number, void>>(
+    (state) => state + 1,
+    0
+  );
+  const createNewAnswer = increment;
+
+  const [answer, setAnswer] = useState("");
+  const [wordBank] = useObservable($wordBank);
+  useEffect(() => {
+    getRandomWord(wordBank).then((_answer) => {
+      if (_answer) {
+        setAnswer(_answer.toUpperCase());
+      }
+    });
+  }, [wordBank, id]);
+  return [answer, createNewAnswer] as [string, () => void];
+}
 
 const App: React.FC = () => {
-  const [gameId, setGameId] = useState(0);
-  const handleNewGame = () => setGameId(gameId + 1);
+  const [answer, createNewAnswer] = useAnswer();
+  const handleNewGame = createNewAnswer;
 
   const [allowNonWordGuesses, setAllowNonWordGuesses] =
     useObservable($allowNonWordGuesses);
@@ -52,7 +72,7 @@ const App: React.FC = () => {
         <button onClick={handleNewGame}>Start New Game</button>
       </div>
 
-      <Game key={gameId} onNewGame={handleNewGame} />
+      <Game key={answer} answer={answer} onNewGame={handleNewGame} />
     </div>
   );
 };
@@ -82,20 +102,10 @@ type CharacterStatus = {
 };
 type WordStatus = CharacterStatus[];
 
-function useAnswerCapitalized() {
-  const [answer, setAnswer] = useState("");
-  useEffect(() => {
-    getRandomWord(SIZE).then(setAnswer);
-  }, []);
-  const answerCapitalized = useMemo(() => answer.toUpperCase(), [answer]);
-  return answerCapitalized;
-}
-
 const Game: React.FC<{
+  answer: string;
   onNewGame: () => void;
-}> = ({ onNewGame }) => {
-  const answerCapitalized = useAnswerCapitalized();
-
+}> = ({ answer, onNewGame }) => {
   const [guesses, addGuess] = useReducer<Reducer<WordStatus[], WordStatus>>(
     (state, action) => [...state, action],
     []
@@ -109,8 +119,8 @@ const Game: React.FC<{
     const guessC = guess.toUpperCase();
     const status: WordStatus = guessC.split("").map((character, i) => ({
       character,
-      inWord: answerCapitalized.includes(character),
-      inPosition: answerCapitalized[i] === character,
+      inWord: answer.includes(character),
+      inPosition: answer[i] === character,
     }));
 
     addGuess(status);
@@ -118,12 +128,12 @@ const Game: React.FC<{
       status.filter((s) => !s.inWord).map((s) => s.character)
     );
 
-    if (guessC === answerCapitalized) {
+    if (guessC === answer) {
       setWon(true);
     }
   };
 
-  if (!answerCapitalized) {
+  if (!answer) {
     return null;
   }
 
@@ -141,13 +151,14 @@ const Game: React.FC<{
         ) : (
           <React.Fragment>
             <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
-            <button onClick={() => handleSubmitGuess(answerCapitalized)}>
+            <button onClick={() => handleSubmitGuess(answer)}>
               Just tell me
             </button>
           </React.Fragment>
         )}
       </div>
       <Keyboard disabledLetters={eliminatedLetters} />
+      <WordBank />
     </React.Fragment>
   );
 };
@@ -265,6 +276,32 @@ const WordResult: React.FC<{
           {status.character}
         </div>
       ))}
+    </div>
+  );
+};
+
+const WordBank: React.FC = () => {
+  const [wordBank, setWordBank] = useObservable($wordBank);
+  const [value, setValue] = useState(wordBank.join("\n"));
+
+  const reset = () => setValue(wordBank.join("\n"));
+  const update = () => {
+    setWordBank(value.split("\n").map((word) => word.trim()));
+  };
+
+  return (
+    <div>
+      <div style={{ display: "flex" }}>
+        <label>Word Bank</label>
+        <textarea
+          value={value}
+          onChange={(event) => setValue(event.target.value)}
+        />
+      </div>
+      <div>
+        <button onClick={reset}>Reset</button>
+        <button onClick={update}>Update</button>
+      </div>
     </div>
   );
 };
