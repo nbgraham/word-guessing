@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { unique } from "./array";
 import { Observable, useObservable } from "./observable";
 import { getRandomWord, isAWord } from "./words";
 
@@ -34,10 +35,10 @@ const App: React.FC = () => {
       }}
     >
       <div>
-        Guess the 5-letter word! <br/>
+        Guess the 5-letter word! <br />
         Press Enter/Return to submit guess. After each guess:
         <ul>
-          <li>Green means the letter is in the word and in the right spot</li>
+          <li>Green means the letter is in the word, and in the right spot</li>
           <li>Yellow means the letter is in the word, but not in that spot</li>
           <li>No color means the letter is not in the word</li>
         </ul>
@@ -76,36 +77,78 @@ const Checkbox: React.FC<{
   );
 };
 
+type CharacterStatus = {
+  character: string;
+  inWord: boolean;
+  inPosition: boolean;
+};
+type WordStatus = CharacterStatus[];
+
 const Game: React.FC<{
   answer: string;
   onNewGame: () => void;
 }> = ({ answer, onNewGame }) => {
-  const [guesses, addGuess] = useReducer<Reducer<string[], string>>(
+  const answerC = useMemo(() => answer.toUpperCase(), [answer]);
+  const [guesses, addGuess] = useReducer<Reducer<WordStatus[], WordStatus>>(
     (state, action) => [...state, action],
     []
   );
+  const [eliminatedLetters, addEliminatedLetters] = useReducer<
+    Reducer<string[], string[]>
+  >((state, action) => unique([...state, ...action]).sort(), []);
   const [won, setWon] = useState(false);
+
   const handleSubmitGuess = (guess: string) => {
-    addGuess(guess);
-    if (guess.toUpperCase() === answer.toUpperCase()) {
+    const guessC = guess.toUpperCase();
+    const status: WordStatus = guessC.split("").map((character, i) => ({
+      character,
+      inWord: answerC.includes(character),
+      inPosition: answerC[i] === character,
+    }));
+
+    addGuess(status);
+    addEliminatedLetters(
+      status.filter((s) => !s.inWord).map((s) => s.character)
+    );
+
+    if (guessC === answerC) {
       setWon(true);
     }
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      {guesses.map((guess, index) => (
-        <WordResult key={index} answer={answer} guess={guess} />
-      ))}
-      {won ? (
-        <div>
-          You won!
-          <button onClick={onNewGame}>New Game?</button>
+    <React.Fragment>
+      <div style={{ display: "flex", flexDirection: "column" }}>
+        {guesses.map((guess, index) => (
+          <WordResult key={index} guessStatus={guess} />
+        ))}
+        {won ? (
+          <div>
+            You won!
+            <button onClick={onNewGame}>New Game?</button>
+          </div>
+        ) : (
+          <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
+        )}
+      </div>
+      <div>
+        Eliminated Letters:
+        <div style={{ display: "flex", maxWidth: 200 }}>
+          {eliminatedLetters.map((letter, index) => (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                gap: 10,
+              }}
+            >
+              {letter}
+            </div>
+          ))}
         </div>
-      ) : (
-        <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
-      )}
-    </div>
+      </div>
+    </React.Fragment>
   );
 };
 
@@ -160,34 +203,27 @@ const Guess: React.FC<{
 };
 
 const WordResult: React.FC<{
-  guess: string;
-  answer: string;
-}> = ({ guess, answer }) => {
-  const guessC = useMemo(() => guess.toUpperCase(), [guess]);
-  const answerC = useMemo(() => answer.toUpperCase(), [answer]);
-
-  const getColor = (index: number) => {
-    if (guessC[index] === answerC[index]) {
-      return "green";
-    }
-    if (answerC.includes(guessC[index])) {
-      return "yellow";
+  guessStatus: WordStatus;
+}> = ({ guessStatus }) => {
+  const getColor = (status: CharacterStatus) => {
+    if (status.inWord) {
+      return status.inPosition ? "green" : "yellow";
     }
   };
 
   return (
     <div style={{ display: "flex", maxWidth: 100 }}>
-      {guessC.split("").map((letter, index) => (
+      {guessStatus.map((status, index) => (
         <div
           key={index}
           style={{
-            backgroundColor: getColor(index),
+            backgroundColor: getColor(status),
             flex: 1,
             display: "flex",
             justifyContent: "center",
           }}
         >
-          {letter}
+          {status.character}
         </div>
       ))}
     </div>
