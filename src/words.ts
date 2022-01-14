@@ -1,8 +1,20 @@
-export function getRandomWord(size: number) {
-  if (size === 5) {
-    return chooseRandomWord(fiveLetterWords)
+export async function getRandomWord(size: number) {
+  while (true) {
+    const testWord = _getRandomWord(size);
+    if (await isAWord(testWord)) {
+      return testWord;
+    } else {
+      console.warn(`"${testWord}" is not a word. Looking for another word.`);
+    }
   }
-  throw new Error(`No ${size} letter words available`);
+}
+
+function _getRandomWord(size: number) {
+  if (size === 5) {
+    return chooseRandomWord(fiveLetterWords);
+  } else {
+    throw new Error(`No ${size} letter words available`);
+  }
 }
 
 function chooseRandomWord(words: string[]) {
@@ -11,14 +23,14 @@ function chooseRandomWord(words: string[]) {
 }
 
 export async function isAWord(word: string) {
-  if (fiveLetterWords.includes(word)) {
-    return true;
-  }
-  
-  const result = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+  if (!word) return false;
+  const result = await fetch(
+    `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+  );
   return result.status === 200 || result.status === 304;
 }
 
+// https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt
 const fiveLetterWords = [
   "which",
   "there",

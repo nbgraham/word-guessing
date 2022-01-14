@@ -16,10 +16,13 @@ const SIZE = 5;
 const $allowNonWordGuesses = new Observable(false);
 
 const App: React.FC = () => {
-  const [answer, setAnswer] = useState(getRandomWord(SIZE));
-  const handleNewGame = () => {
-    setAnswer(getRandomWord(SIZE));
-  };
+  const [answer, setAnswer] = useState("");
+  const [gameId, setGameId] = useState(0);
+  useEffect(() => {
+    getRandomWord(SIZE).then(setAnswer);
+  }, [gameId]);
+
+  const handleNewGame = () => setGameId(gameId + 1);
 
   const [allowNonWordGuesses, setAllowNonWordGuesses] =
     useObservable($allowNonWordGuesses);
@@ -54,7 +57,9 @@ const App: React.FC = () => {
         <button onClick={handleNewGame}>Start New Game</button>
       </div>
 
-      <Game key={answer} answer={answer} onNewGame={handleNewGame} />
+      {answer && (
+        <Game key={answer} answer={answer} onNewGame={handleNewGame} />
+      )}
     </div>
   );
 };
