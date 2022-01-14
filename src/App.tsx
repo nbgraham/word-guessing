@@ -128,7 +128,12 @@ const Game: React.FC<{
             <button onClick={onNewGame}>New Game?</button>
           </div>
         ) : (
-          <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
+          <React.Fragment>
+            <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
+            <button onClick={() => handleSubmitGuess(answer)}>
+              Just tell me
+            </button>
+          </React.Fragment>
         )}
       </div>
       <div>
