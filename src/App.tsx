@@ -16,12 +16,7 @@ const SIZE = 5;
 const $allowNonWordGuesses = new Observable(false);
 
 const App: React.FC = () => {
-  const [answer, setAnswer] = useState("");
   const [gameId, setGameId] = useState(0);
-  useEffect(() => {
-    getRandomWord(SIZE).then(setAnswer);
-  }, [gameId]);
-
   const handleNewGame = () => setGameId(gameId + 1);
 
   const [allowNonWordGuesses, setAllowNonWordGuesses] =
@@ -57,9 +52,7 @@ const App: React.FC = () => {
         <button onClick={handleNewGame}>Start New Game</button>
       </div>
 
-      {answer && (
-        <Game key={answer} answer={answer} onNewGame={handleNewGame} />
-      )}
+      <Game key={gameId} onNewGame={handleNewGame} />
     </div>
   );
 };
@@ -89,11 +82,20 @@ type CharacterStatus = {
 };
 type WordStatus = CharacterStatus[];
 
+function useAnswerCapitalized() {
+  const [answer, setAnswer] = useState("");
+  useEffect(() => {
+    getRandomWord(SIZE).then(setAnswer);
+  }, []);
+  const answerCapitalized = useMemo(() => answer.toUpperCase(), [answer]);
+  return answerCapitalized;
+}
+
 const Game: React.FC<{
-  answer: string;
   onNewGame: () => void;
-}> = ({ answer, onNewGame }) => {
-  const answerC = useMemo(() => answer.toUpperCase(), [answer]);
+}> = ({ onNewGame }) => {
+  const answerCapitalized = useAnswerCapitalized();
+
   const [guesses, addGuess] = useReducer<Reducer<WordStatus[], WordStatus>>(
     (state, action) => [...state, action],
     []
@@ -107,8 +109,8 @@ const Game: React.FC<{
     const guessC = guess.toUpperCase();
     const status: WordStatus = guessC.split("").map((character, i) => ({
       character,
-      inWord: answerC.includes(character),
-      inPosition: answerC[i] === character,
+      inWord: answerCapitalized.includes(character),
+      inPosition: answerCapitalized[i] === character,
     }));
 
     addGuess(status);
@@ -116,10 +118,14 @@ const Game: React.FC<{
       status.filter((s) => !s.inWord).map((s) => s.character)
     );
 
-    if (guessC === answerC) {
+    if (guessC === answerCapitalized) {
       setWon(true);
     }
   };
+
+  if (!answerCapitalized) {
+    return null;
+  }
 
   return (
     <React.Fragment>
@@ -135,7 +141,7 @@ const Game: React.FC<{
         ) : (
           <React.Fragment>
             <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
-            <button onClick={() => handleSubmitGuess(answer)}>
+            <button onClick={() => handleSubmitGuess(answerCapitalized)}>
               Just tell me
             </button>
           </React.Fragment>
