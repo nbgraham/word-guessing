@@ -1,4 +1,21 @@
-export const fiveLetterWords = [
+export function getRandomWord(size: number) {
+  if (size === 5) {
+    return chooseRandomWord(fiveLetterWords)
+  }
+  throw new Error(`No ${size} letter words available`);
+}
+
+function chooseRandomWord(words: string[]) {
+  const index = Math.floor(words.length * Math.random());
+  return words[index];
+}
+
+export async function isAWord(word: string) {
+  const result = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+  return result.status === 200 || result.status === 304;
+}
+
+const fiveLetterWords = [
   "which",
   "there",
   "their",

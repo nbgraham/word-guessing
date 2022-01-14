@@ -7,19 +7,15 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { fiveLetterWords } from "./words";
+import { getRandomWord, isAWord } from "./words";
 
 const SIZE = 5;
-
-function getFiveLetterWord() {
-  const index = Math.floor(fiveLetterWords.length * Math.random());
-  return fiveLetterWords[index];
-}
+const ALLOW_NON_WORD_GUESSES = false;
 
 function App() {
-  const [answer, setAnswer] = useState(getFiveLetterWord());
+  const [answer, setAnswer] = useState(getRandomWord(SIZE));
   const handleRestart = () => {
-    setAnswer(getFiveLetterWord());
+    setAnswer(getRandomWord(SIZE));
   };
 
   return <Game key={answer} answer={answer} onRestart={handleRestart} />;
@@ -62,9 +58,22 @@ const Guess: React.FC<{
   onSubmitGuess: (guess: string) => void;
 }> = ({ onSubmitGuess }) => {
   const [guess, setGuess] = useState("");
-  const handleSubmit: FormEventHandler = (event) => {
+  const [validating, setValidating] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const validate = async (value: string) => {
+    setValidating(true);
+    const isValid = ALLOW_NON_WORD_GUESSES || (await isAWord(value));
+    setErrorMessage(isValid ? "" : `"${value}" is not an English word`);
+    setValidating(false);
+    return isValid;
+  };
+
+  const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
-    onSubmitGuess?.(guess);
+    if (await validate(guess)) {
+      onSubmitGuess?.(guess);
+    }
   };
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -79,6 +88,8 @@ const Guess: React.FC<{
       <input
         ref={inputRef}
         placeholder="Guess"
+        required={true}
+        disabled={validating}
         type="text"
         pattern="^[a-zA-Z]*$"
         title="Only letters are allowed"
@@ -87,6 +98,7 @@ const Guess: React.FC<{
         value={guess}
         onChange={(event) => setGuess(event.target.value)}
       />
+      <div style={{ color: "red" }}>{errorMessage}</div>
     </form>
   );
 };
@@ -111,11 +123,12 @@ const WordResult: React.FC<{
     <div style={{ display: "flex", maxWidth: 100 }}>
       {guessC.split("").map((letter, index) => (
         <div
+          key={index}
           style={{
             backgroundColor: getColor(index),
             flex: 1,
             display: "flex",
-            justifyContent: "center"
+            justifyContent: "center",
           }}
         >
           {letter}
