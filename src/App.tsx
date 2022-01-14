@@ -14,9 +14,9 @@ const SIZE = 5;
 
 const $allowNonWordGuesses = new Observable(false);
 
-function App() {
+const App: React.FC = () => {
   const [answer, setAnswer] = useState(getRandomWord(SIZE));
-  const handleRestart = () => {
+  const handleNewGame = () => {
     setAnswer(getRandomWord(SIZE));
   };
 
@@ -24,16 +24,39 @@ function App() {
     useObservable($allowNonWordGuesses);
 
   return (
-    <div>
-      <Checkbox
-        label="Allow non-word guesses"
-        checked={allowNonWordGuesses}
-        onChange={setAllowNonWordGuesses}
-      />
-      <Game key={answer} answer={answer} onRestart={handleRestart} />
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 30,
+        padding: 100,
+      }}
+    >
+      <div>
+        Guess the 5-letter word! <br/>
+        Press Enter/Return to submit guess. After each guess:
+        <ul>
+          <li>Green means the letter is in the word and in the right spot</li>
+          <li>Yellow means the letter is in the word, but not in that spot</li>
+          <li>No color means the letter is not in the word</li>
+        </ul>
+      </div>
+
+      <div>
+        <strong>Game Settings</strong>
+        <Checkbox
+          label="Allow non-word guesses"
+          checked={allowNonWordGuesses}
+          onChange={setAllowNonWordGuesses}
+        />
+        <button onClick={handleNewGame}>Start New Game</button>
+      </div>
+
+      <Game key={answer} answer={answer} onNewGame={handleNewGame} />
     </div>
   );
-}
+};
 
 const Checkbox: React.FC<{
   label: string;
@@ -55,8 +78,8 @@ const Checkbox: React.FC<{
 
 const Game: React.FC<{
   answer: string;
-  onRestart: () => void;
-}> = ({ answer, onRestart }) => {
+  onNewGame: () => void;
+}> = ({ answer, onNewGame }) => {
   const [guesses, addGuess] = useReducer<Reducer<string[], string>>(
     (state, action) => [...state, action],
     []
@@ -77,7 +100,7 @@ const Game: React.FC<{
       {won ? (
         <div>
           You won!
-          <button onClick={onRestart}>Restart?</button>
+          <button onClick={onNewGame}>New Game?</button>
         </div>
       ) : (
         <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
