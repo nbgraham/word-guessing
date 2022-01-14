@@ -136,24 +136,47 @@ const Game: React.FC<{
           </React.Fragment>
         )}
       </div>
-      <div>
-        Eliminated Letters:
-        <div style={{ display: "flex", maxWidth: 200 }}>
-          {eliminatedLetters.map((letter, index) => (
-            <div
-              key={index}
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: 10,
-              }}
-            >
+      <Keyboard disabledLetters={eliminatedLetters} />
+    </React.Fragment>
+  );
+};
+
+const Keyboard: React.FC<{
+  disabledLetters: string[];
+}> = ({ disabledLetters }) => {
+  const rows = useMemo(() => ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"], []);
+  const data = useMemo(() => rows.map((row) => row.split("")), [rows]);
+
+  const getStyle: (letter: string) => React.CSSProperties = (letter) => {
+    const disabled = disabledLetters.includes(letter);
+    const extraStyles: React.CSSProperties = disabled
+      ? {
+          opacity: 0.5,
+          textDecoration: "line-through",
+        }
+      : {};
+    return {
+      display: "flex",
+      justifyContent: "center",
+      ...extraStyles,
+    };
+  };
+
+  return (
+    <div>
+      {data.map((row, index) => (
+        <div
+          key={index}
+          style={{ display: "flex", gap: 4, justifyContent: "center" }}
+        >
+          {row.map((letter) => (
+            <div key={letter} style={getStyle(letter)}>
               {letter}
             </div>
           ))}
         </div>
-      </div>
-    </React.Fragment>
+      ))}
+    </div>
   );
 };
 
