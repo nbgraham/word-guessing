@@ -8,15 +8,14 @@ import React, {
   useState,
 } from "react";
 import { unique } from "./array";
-import { Observable, useObservable } from "./observable";
+import { useObservable } from "./observable";
 import { isAWord, useAnswer, useNewAnswer } from "./words";
 import { Navigate, useParams } from "react-router-dom";
+import { $allowNonWordGuesses } from "./settings";
 
 const SIZE = 5;
 const BACKSPACE = "<";
 const SUBMIT = "=";
-
-const $allowNonWordGuesses = new Observable(false);
 
 export const PlayNew: React.FC = () => {
   const answer = useNewAnswer();
@@ -38,8 +37,6 @@ export const Play: React.FC = () => {
   );
   const answer = useAnswer(answerObject);
 
-  const [allowNonWordGuesses, setAllowNonWordGuesses] =
-    useObservable($allowNonWordGuesses);
 
   return (
     <div
@@ -50,37 +47,7 @@ export const Play: React.FC = () => {
         gap: 30,
       }}
     >
-      <div>
-        <h2>
-          Game ID {wordBankId}:{answerId}
-        </h2>
-        <strong>Game Settings</strong>
-        <Checkbox
-          label="Allow non-word guesses"
-          checked={allowNonWordGuesses}
-          onChange={setAllowNonWordGuesses}
-        />
-      </div>
-
       {answer && <Game key={answer} answer={answer} />}
-    </div>
-  );
-};
-
-const Checkbox: React.FC<{
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
-}> = ({ label, checked, onChange }) => {
-  const toggle = () => onChange(!checked);
-  return (
-    <div>
-      <label onClick={toggle}>{label}</label>
-      <input
-        type="checkbox"
-        checked={checked}
-        onChange={(event) => onChange(event.target.checked)}
-      />
     </div>
   );
 };
@@ -135,11 +102,13 @@ const Game: React.FC<{
         gap: 5,
       }}
     >
-      <div>
-        <button onClick={() => handleSubmitGuess(answer)}>
-          Just tell me the answer
-        </button>
-      </div>
+      {!won && (
+        <div>
+          <button onClick={() => handleSubmitGuess(answer)}>
+            Just tell me the answer
+          </button>
+        </div>
+      )}
       {guesses.map((guess, index) => (
         <WordResult key={index} guessStatus={guess} />
       ))}
