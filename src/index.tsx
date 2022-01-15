@@ -9,7 +9,7 @@ import { Provider } from "react-redux";
 ReactDOM.render(
   <React.StrictMode>
     <Provider store={store}>
-      <HashRouter>
+      <HashRouter basename="/word-guessing">
         <App />
       </HashRouter>
     </Provider>
