@@ -21,11 +21,10 @@ const App: React.FC = () => {
     <div className="App">
       <nav>
         <Link to="/play/new">Play New Game</Link>&nbsp;|&nbsp;
-        <Link to="/words">Word Bank</Link>
       </nav>
+      <h1>Guess the Word!</h1>
       <Routes>
         <Route path="/" element={<Navigate replace to="/play/new" />} />
-        <Route path="words" element={<WordBank />} />
         <Route path="play/new" element={<PlayNew />} />
         <Route path="play/:wordBankId/:answerId" element={<Play />} />
       </Routes>
@@ -319,32 +318,6 @@ const WordResult: React.FC<{
           {status.character}
         </div>
       ))}
-    </div>
-  );
-};
-
-const WordBank: React.FC = () => {
-  const [wordBank, setWordBank] = useState(["words"]); // TODO
-  const [value, setValue] = useState(wordBank.join("\n"));
-
-  const reset = () => setValue(wordBank.join("\n"));
-  const update = () => {
-    setWordBank(value.split("\n").map((word) => word.trim()));
-  };
-
-  return (
-    <div>
-      <div style={{ display: "flex" }}>
-        <label>Word Bank</label>
-        <textarea
-          value={value}
-          onChange={(event) => setValue(event.target.value)}
-        />
-      </div>
-      <div>
-        <button onClick={reset}>Reset</button>
-        <button onClick={update}>Update</button>
-      </div>
     </div>
   );
 };
