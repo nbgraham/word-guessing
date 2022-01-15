@@ -1,17 +1,21 @@
 import React, {
   FormEventHandler,
-  Reducer,
   useEffect,
   useMemo,
-  useReducer,
   useRef,
   useState,
 } from "react";
-import { unique } from "./array";
 import { useObservable } from "./observable";
 import { isAWord, useAnswer, useNewAnswer } from "./words";
 import { Navigate, useParams } from "react-router-dom";
 import { $allowNonWordGuesses } from "./Settings";
+import {
+  actions,
+  CharacterStatus,
+  useAppDispatch,
+  useAppSelector,
+  WordStatus,
+} from "./store";
 
 const SIZE = 5;
 const BACKSPACE = "<";
@@ -37,7 +41,6 @@ export const Play: React.FC = () => {
   );
   const answer = useAnswer(answerObject);
 
-
   return (
     <div
       style={{
@@ -52,41 +55,24 @@ export const Play: React.FC = () => {
   );
 };
 
-type CharacterStatus = {
-  character: string;
-  inWord: boolean;
-  inPosition: boolean;
-};
-type WordStatus = CharacterStatus[];
-
 const Game: React.FC<{
   answer: string;
 }> = ({ answer }) => {
-  const [guesses, addGuess] = useReducer<Reducer<WordStatus[], WordStatus>>(
-    (state, action) => [...state, action],
-    []
+  const answerState = useAppSelector(
+    (state) => state.answers[answer]
   );
-  const [eliminatedLetters, addEliminatedLetters] = useReducer<
-    Reducer<string[], string[]>
-  >((state, action) => unique([...state, ...action]).sort(), []);
-  const [won, setWon] = useState(false);
+  const guesses = answerState?.guesses ?? [];
+  const eliminatedLetters = answerState?.eliminatedLetters ?? []
+  const won = answerState?.won ?? false;
 
+  const dispatch = useAppDispatch();
   const handleSubmitGuess = (guess: string) => {
-    const guessC = guess.toUpperCase();
-    const status: WordStatus = guessC.split("").map((character, i) => ({
-      character,
-      inWord: answer.includes(character),
-      inPosition: answer[i] === character,
-    }));
-
-    addGuess(status);
-    addEliminatedLetters(
-      status.filter((s) => !s.inWord).map((s) => s.character)
+    dispatch(
+      actions.submitGuess({
+        guess,
+        answer,
+      })
     );
-
-    if (guessC === answer) {
-      setWon(true);
-    }
   };
 
   if (!answer) {

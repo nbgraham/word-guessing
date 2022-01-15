@@ -2,7 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import wordBank from "./word-bank.json";
 
-type Answer = {
+export type Answer = {
   answerId: number;
   wordBankId: number;
 };
