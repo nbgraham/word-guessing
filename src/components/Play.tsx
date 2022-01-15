@@ -16,16 +16,10 @@ import {
   useAppSelector,
   WordStatus,
 } from "../store";
-import spinner from "../assets/spinner.gif";
 import { BACKSPACE, SUBMIT, Keyboard } from "./Keyboard";
+import { Spinner } from "./Spinner";
 
 const SIZE = 5;
-
-const Spinner: React.FC<{ size: number }> = ({ size }) => {
-  return (
-    <img alt="loading" src={spinner} style={{ width: size, height: size }} />
-  );
-};
 
 export const PlayNew: React.FC = () => {
   const answer = useNewAnswer();
