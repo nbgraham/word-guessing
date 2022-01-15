@@ -259,6 +259,20 @@ const Guess: React.FC<{
     }
   }, [inputRef]);
 
+  const handleTypeLetter = (letter: string) => {
+    switch (letter) {
+      case BACKSPACE:
+        setGuess(guess.substring(0, guess.length - 1));
+        break;
+      case SUBMIT:
+        submitGuess();
+        break;
+      default:
+        setGuess(guess + letter);
+        break;
+    }
+  };
+
   return (
     <React.Fragment>
       <form onSubmit={handleSubmit}>
@@ -279,13 +293,7 @@ const Guess: React.FC<{
       </form>
       <Keyboard
         disabledLetters={eliminatedLetters}
-        onTypeLetter={(letter) =>
-          letter === BACKSPACE
-            ? setGuess(guess.substring(0, guess.length - 1))
-            : letter === SUBMIT
-            ? submitGuess()
-            : setGuess(guess + letter)
-        }
+        onTypeLetter={handleTypeLetter}
       />
     </React.Fragment>
   );
