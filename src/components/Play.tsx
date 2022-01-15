@@ -16,15 +16,24 @@ import {
   useAppSelector,
   WordStatus,
 } from "../store";
+import spinner from "../assets/spinner.gif";
 
 const SIZE = 5;
 const BACKSPACE = "<";
 const SUBMIT = "=";
 
+const Spinner: React.FC<{ size: number }> = ({ size }) => {
+  return (
+    <img alt="loading" src={spinner} style={{ width: size, height: size }} />
+  );
+};
+
 export const PlayNew: React.FC = () => {
   const answer = useNewAnswer();
   return answer === undefined ? (
-    <div>Loading Game...</div>
+    <div>
+      Loading Game <Spinner size={15} />
+    </div>
   ) : (
     <Navigate replace to={`/play/${answer.wordBankId}/${answer.answerId}`} />
   );
@@ -298,8 +307,11 @@ const Guess: React.FC<{
           value={guess}
           onChange={(event) => setGuess(event.target.value)}
         />
+        {validating && <Spinner size={15} />}
         <div style={{ color: "red" }}>{errorMessage}</div>
-        <button type="submit">Submit</button>
+        <button disabled={validating} type="submit">
+          Submit
+        </button>
       </form>
       <Keyboard
         disabledLetters={eliminatedLetters}
