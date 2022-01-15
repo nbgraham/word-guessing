@@ -1,3 +1,5 @@
+import React, { useMemo } from "react";
+
 export const BACKSPACE = "<";
 export const SUBMIT = "=";
 
@@ -12,32 +14,6 @@ export const Keyboard: React.FC<{
   highlightedLetters: string[];
   onTypeLetter: (letter: string) => void;
 }> = ({ disabledLetters, highlightedLetters, onTypeLetter }) => {
-  const getStyle: (letter: string) => React.CSSProperties = (letter) => {
-    const disabled = disabledLetters.includes(letter);
-    const highlighted = highlightedLetters.includes(letter);
-    const extraStyles: React.CSSProperties = disabled
-      ? {
-          opacity: 0.5,
-          textDecoration: "line-through",
-          backgroundColor: "#545454",
-        }
-      : highlighted
-      ? {
-          backgroundColor: "#ffc107",
-        }
-      : {};
-    return {
-      display: "flex",
-      flex: 1,
-      padding: "10px 2px",
-      borderRadius: 4,
-      justifyContent: "center",
-      backgroundColor: "#808080",
-      cursor: "pointer",
-      ...extraStyles,
-    };
-  };
-
   return (
     <div
       style={{
@@ -54,16 +30,54 @@ export const Keyboard: React.FC<{
           style={{ display: "flex", gap: 4, justifyContent: "center" }}
         >
           {row.map((letter) => (
-            <div
+            <Letter
               key={letter}
-              style={getStyle(letter)}
+              letter={letter}
               onClick={() => onTypeLetter(letter)}
-            >
-              {letter}
-            </div>
+              disabled={disabledLetters.includes(letter)}
+              highlighted={highlightedLetters.includes(letter)}
+            />
           ))}
         </div>
       ))}
+    </div>
+  );
+};
+
+const Letter: React.FC<{
+  letter: string;
+  onClick: () => void;
+  disabled: boolean;
+  highlighted: boolean;
+}> = ({ letter, onClick, disabled, highlighted }) => {
+  const style = useMemo<React.CSSProperties>(() => {
+    const disabledStyles: React.CSSProperties = disabled
+      ? {
+          opacity: 0.5,
+          textDecoration: "line-through",
+          backgroundColor: "#545454",
+        }
+      : {};
+    const highlightedStyles: React.CSSProperties = highlighted
+      ? {
+          backgroundColor: "#ffc107",
+        }
+      : {};
+    return {
+      display: "flex",
+      flex: 1,
+      padding: "10px 2px",
+      borderRadius: 4,
+      justifyContent: "center",
+      backgroundColor: "#808080",
+      cursor: "pointer",
+      ...disabledStyles,
+      ...highlightedStyles,
+    };
+  }, [disabled, highlighted]);
+  return (
+    <div style={style} onClick={onClick}>
+      {letter}
     </div>
   );
 };
