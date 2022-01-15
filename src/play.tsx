@@ -112,7 +112,7 @@ const Game: React.FC<{
 const Victory: React.FC<{
   guesses: WordStatus[];
 }> = ({ guesses }) => {
-  const summary = useMemo(
+  const guessSummary = useMemo(
     () =>
       guesses
         .map((guess) =>
@@ -127,18 +127,38 @@ const Victory: React.FC<{
         .join("\n"),
     [guesses]
   );
+  const shareText = useMemo(
+    () =>
+      `I won in ${guesses.length} guesses:!\n` +
+      guessSummary +
+      `\nTry for yourself at ${window.location.href}`,
+    [guessSummary, guesses.length]
+  );
 
+  const canShare = typeof navigator.share === "function";
   const [copied, setCopied] = useState(false);
-  const copySummary = async () => {
-    await navigator.clipboard.writeText(summary + `\nTry for yourself at ${window.location.href}`);
+  const copyShareText = async () => {
+    await navigator.clipboard.writeText(shareText);
     setCopied(true);
+  };
+
+  const share = () => {
+    navigator.share({
+      text: shareText,
+      title: "Word Guessing Game",
+      url: window.location.href,
+    });
   };
 
   return (
     <div>
       <p>You won!</p>
-      <pre>{summary}</pre>
-      <button onClick={copySummary}>Copy Results</button>
+      <pre>{guessSummary}</pre>
+      {canShare ? (
+        <button onClick={share}>Share</button>
+      ) : (
+        <button onClick={copyShareText}>Copy Share Text</button>
+      )}
       {copied && <div>Copied!</div>}
     </div>
   );
