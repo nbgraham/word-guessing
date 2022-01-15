@@ -1,5 +1,6 @@
 // https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt
 import { useEffect, useMemo, useState } from "react";
+import { $offlineMode } from "./Settings";
 import wordBank from "./word-bank.json";
 
 export type Answer = {
@@ -48,6 +49,7 @@ function chooseRandomWord(words: string[]) {
 
 export async function isAWord(word: string) {
   if (!word) return false;
+  if ($offlineMode.value) return true;
   const result = await fetch(
     `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
   );
