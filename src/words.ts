@@ -13,7 +13,6 @@ export function useNewAnswer() {
   }, []);
   return answer;
 }
-
 export function useAnswer(answer: Answer) {
   return useMemo(() => {
     if (answer.wordBankId === wordBank.version) {

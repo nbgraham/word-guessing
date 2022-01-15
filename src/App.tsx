@@ -86,7 +86,6 @@ const Play: React.FC = () => {
           checked={allowNonWordGuesses}
           onChange={setAllowNonWordGuesses}
         />
-        <Link to="/play/new">Start New Game</Link>
       </div>
 
       {answer && <Game key={answer} answer={answer} />}
