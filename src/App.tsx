@@ -90,7 +90,7 @@ const Play: React.FC = () => {
         <button onClick={handleNewGame}>Start New Game</button>
       </div>
 
-      <Game key={answer} answer={answer} onNewGame={handleNewGame} />
+      <Game key={answer} answer={answer} />
     </div>
   );
 };
@@ -122,8 +122,7 @@ type WordStatus = CharacterStatus[];
 
 const Game: React.FC<{
   answer: string;
-  onNewGame: () => void;
-}> = ({ answer, onNewGame }) => {
+}> = ({ answer }) => {
   const [guesses, addGuess] = useReducer<Reducer<WordStatus[], WordStatus>>(
     (state, action) => [...state, action],
     []
