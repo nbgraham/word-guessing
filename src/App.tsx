@@ -3,15 +3,14 @@ import { Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
 import { Play, PlayNew } from "./Play";
 import { Settings } from "./Settings";
 
-const rootPath = "/word-guessing";
 const App: React.FC = () => {
   return (
     <div className="App">
       <h1>Guess the Word!</h1>
       <nav>
-        <Link to={`${rootPath}/play/new`}>Play New Game</Link> |&nbsp;
-        <Link to={`${rootPath}/instructions`}>Instructions</Link> |&nbsp;
-        <Link to={`${rootPath}/settings`}>Settings</Link>
+        <Link to="/play/new">Play New Game</Link> |&nbsp;
+        <Link to="/instructions">Instructions</Link> |&nbsp;
+        <Link to="/settings">Settings</Link>
       </nav>
       <Routes>
         <Route path="/" element={<Navigate replace to="/play/new" />} />
