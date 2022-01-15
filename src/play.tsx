@@ -61,6 +61,7 @@ const Game: React.FC<{
   const answerState = useAppSelector((state) => state.answers[answer]);
   const guesses = answerState?.guesses ?? [];
   const eliminatedLetters = answerState?.eliminatedLetters ?? [];
+  const foundLetters = answerState?.foundLetters ?? [];
   const won = answerState?.won ?? false;
 
   const dispatch = useAppDispatch();
@@ -104,6 +105,7 @@ const Game: React.FC<{
           key={guesses.length}
           onSubmitGuess={handleSubmitGuess}
           eliminatedLetters={eliminatedLetters}
+          foundLetters={foundLetters}
         />
       )}
     </div>
@@ -166,8 +168,9 @@ const Victory: React.FC<{
 
 const Keyboard: React.FC<{
   disabledLetters: string[];
+  highlightedLetters: string[];
   onTypeLetter: (letter: string) => void;
-}> = ({ disabledLetters, onTypeLetter }) => {
+}> = ({ disabledLetters, highlightedLetters, onTypeLetter }) => {
   const rows = useMemo(
     () => ["QWERTYUIOP", "ASDFGHJKL", `ZXCVBNM${BACKSPACE}${SUBMIT}`],
     []
@@ -176,11 +179,16 @@ const Keyboard: React.FC<{
 
   const getStyle: (letter: string) => React.CSSProperties = (letter) => {
     const disabled = disabledLetters.includes(letter);
+    const highlighted = highlightedLetters.includes(letter);
     const extraStyles: React.CSSProperties = disabled
       ? {
           opacity: 0.5,
           textDecoration: "line-through",
           backgroundColor: "#545454",
+        }
+      : highlighted
+      ? {
+          backgroundColor: "#ffc107",
         }
       : {};
     return {
@@ -228,7 +236,8 @@ const Keyboard: React.FC<{
 const Guess: React.FC<{
   onSubmitGuess: (guess: string) => void;
   eliminatedLetters: string[];
-}> = ({ onSubmitGuess, eliminatedLetters }) => {
+  foundLetters: string[];
+}> = ({ onSubmitGuess, eliminatedLetters, foundLetters }) => {
   const [guess, setGuess] = useState("");
   const [validating, setValidating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -294,6 +303,7 @@ const Guess: React.FC<{
       </form>
       <Keyboard
         disabledLetters={eliminatedLetters}
+        highlightedLetters={foundLetters}
         onTypeLetter={handleTypeLetter}
       />
     </React.Fragment>

@@ -58,6 +58,14 @@ export const gameSlice = createSlice({
         ...eliminatedLetters,
       ]);
 
+      const foundLetters = status
+        .filter((s) => s.inWord)
+        .map((s) => s.character);
+      state.answers[answer].foundLetters = unique([
+        ...state.answers[answer].foundLetters,
+        ...foundLetters,
+      ]);
+
       state.answers[answer].guesses.push(status);
     },
   },
