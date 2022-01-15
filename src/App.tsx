@@ -154,7 +154,6 @@ const Game: React.FC<{
           </React.Fragment>
         )}
       </div>
-      <Victory guesses={guesses} />
       <Keyboard disabledLetters={eliminatedLetters} />
       <WordBank />
     </React.Fragment>
