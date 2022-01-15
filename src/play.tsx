@@ -13,6 +13,8 @@ import { isAWord, useAnswer, useNewAnswer } from "./words";
 import { Navigate, useParams } from "react-router-dom";
 
 const SIZE = 5;
+const BACKSPACE = "<";
+const SUBMIT = "=";
 
 const $allowNonWordGuesses = new Observable(false);
 
@@ -46,7 +48,6 @@ export const Play: React.FC = () => {
         flexDirection: "column",
         alignItems: "center",
         gap: 30,
-        padding: 100,
       }}
     >
       <div>
@@ -126,24 +127,32 @@ const Game: React.FC<{
   }
 
   return (
-    <React.Fragment>
-      <div style={{ display: "flex", flexDirection: "column" }}>
-        {guesses.map((guess, index) => (
-          <WordResult key={index} guessStatus={guess} />
-        ))}
-        {won ? (
-          <Victory guesses={guesses} />
-        ) : (
-          <React.Fragment>
-            <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
-            <button onClick={() => handleSubmitGuess(answer)}>
-              Just tell me
-            </button>
-          </React.Fragment>
-        )}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 5,
+      }}
+    >
+      <div>
+        <button onClick={() => handleSubmitGuess(answer)}>
+          Just tell me the answer
+        </button>
       </div>
-      <Keyboard disabledLetters={eliminatedLetters} />
-    </React.Fragment>
+      {guesses.map((guess, index) => (
+        <WordResult key={index} guessStatus={guess} />
+      ))}
+      {won ? (
+        <Victory guesses={guesses} />
+      ) : (
+        <Guess
+          key={guesses.length}
+          onSubmitGuess={handleSubmitGuess}
+          eliminatedLetters={eliminatedLetters}
+        />
+      )}
+    </div>
   );
 };
 
@@ -181,8 +190,12 @@ const Victory: React.FC<{
 
 const Keyboard: React.FC<{
   disabledLetters: string[];
-}> = ({ disabledLetters }) => {
-  const rows = useMemo(() => ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"], []);
+  onTypeLetter: (letter: string) => void;
+}> = ({ disabledLetters, onTypeLetter }) => {
+  const rows = useMemo(
+    () => ["QWERTYUIOP", "ASDFGHJKL", `ZXCVBNM${BACKSPACE}${SUBMIT}`],
+    []
+  );
   const data = useMemo(() => rows.map((row) => row.split("")), [rows]);
 
   const getStyle: (letter: string) => React.CSSProperties = (letter) => {
@@ -191,24 +204,42 @@ const Keyboard: React.FC<{
       ? {
           opacity: 0.5,
           textDecoration: "line-through",
+          backgroundColor: "#545454",
         }
       : {};
     return {
       display: "flex",
+      flex: 1,
+      padding: "10px 2px",
+      borderRadius: 4,
       justifyContent: "center",
+      backgroundColor: "#808080",
+      cursor: "pointer",
       ...extraStyles,
     };
   };
 
   return (
-    <div>
+    <div
+      style={{
+        width: "100vw",
+        maxWidth: 400,
+        display: "flex",
+        gap: 4,
+        flexDirection: "column",
+      }}
+    >
       {data.map((row, index) => (
         <div
           key={index}
           style={{ display: "flex", gap: 4, justifyContent: "center" }}
         >
           {row.map((letter) => (
-            <div key={letter} style={getStyle(letter)}>
+            <div
+              key={letter}
+              style={getStyle(letter)}
+              onClick={() => onTypeLetter(letter)}
+            >
               {letter}
             </div>
           ))}
@@ -220,7 +251,8 @@ const Keyboard: React.FC<{
 
 const Guess: React.FC<{
   onSubmitGuess: (guess: string) => void;
-}> = ({ onSubmitGuess }) => {
+  eliminatedLetters: string[];
+}> = ({ onSubmitGuess, eliminatedLetters }) => {
   const [guess, setGuess] = useState("");
   const [validating, setValidating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -236,6 +268,9 @@ const Guess: React.FC<{
 
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
+    await submitGuess();
+  };
+  const submitGuess = async () => {
     if (await validate(guess)) {
       onSubmitGuess?.(guess);
     }
@@ -249,22 +284,34 @@ const Guess: React.FC<{
   }, [inputRef]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        ref={inputRef}
-        placeholder="Guess"
-        required={true}
-        disabled={validating}
-        type="text"
-        pattern="^[a-zA-Z]*$"
-        title="Only letters are allowed"
-        minLength={SIZE}
-        maxLength={SIZE}
-        value={guess}
-        onChange={(event) => setGuess(event.target.value)}
+    <React.Fragment>
+      <form onSubmit={handleSubmit}>
+        <input
+          ref={inputRef}
+          placeholder="Guess"
+          required={true}
+          disabled={validating}
+          type="text"
+          pattern="^[a-zA-Z]*$"
+          title="Only letters are allowed"
+          minLength={SIZE}
+          maxLength={SIZE}
+          value={guess}
+          onChange={(event) => setGuess(event.target.value)}
+        />
+        <div style={{ color: "red" }}>{errorMessage}</div>
+      </form>
+      <Keyboard
+        disabledLetters={eliminatedLetters}
+        onTypeLetter={(letter) =>
+          letter === BACKSPACE
+            ? setGuess(guess.substring(0, guess.length - 1))
+            : letter === SUBMIT
+            ? submitGuess()
+            : setGuess(guess + letter)
+        }
       />
-      <div style={{ color: "red" }}>{errorMessage}</div>
-    </form>
+    </React.Fragment>
   );
 };
 
