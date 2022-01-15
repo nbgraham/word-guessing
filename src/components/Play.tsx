@@ -17,10 +17,9 @@ import {
   WordStatus,
 } from "../store";
 import spinner from "../assets/spinner.gif";
+import { BACKSPACE, SUBMIT, Keyboard } from "./Keyboard";
 
 const SIZE = 5;
-const BACKSPACE = "<";
-const SUBMIT = "=";
 
 const Spinner: React.FC<{ size: number }> = ({ size }) => {
   return (
@@ -171,73 +170,6 @@ const Victory: React.FC<{
         <button onClick={copyShareText}>Copy Share Text</button>
       )}
       {copied && <div>Copied!</div>}
-    </div>
-  );
-};
-
-const Keyboard: React.FC<{
-  disabledLetters: string[];
-  highlightedLetters: string[];
-  onTypeLetter: (letter: string) => void;
-}> = ({ disabledLetters, highlightedLetters, onTypeLetter }) => {
-  const rows = useMemo(
-    () => ["QWERTYUIOP", "ASDFGHJKL", `ZXCVBNM${BACKSPACE}${SUBMIT}`],
-    []
-  );
-  const data = useMemo(() => rows.map((row) => row.split("")), [rows]);
-
-  const getStyle: (letter: string) => React.CSSProperties = (letter) => {
-    const disabled = disabledLetters.includes(letter);
-    const highlighted = highlightedLetters.includes(letter);
-    const extraStyles: React.CSSProperties = disabled
-      ? {
-          opacity: 0.5,
-          textDecoration: "line-through",
-          backgroundColor: "#545454",
-        }
-      : highlighted
-      ? {
-          backgroundColor: "#ffc107",
-        }
-      : {};
-    return {
-      display: "flex",
-      flex: 1,
-      padding: "10px 2px",
-      borderRadius: 4,
-      justifyContent: "center",
-      backgroundColor: "#808080",
-      cursor: "pointer",
-      ...extraStyles,
-    };
-  };
-
-  return (
-    <div
-      style={{
-        width: "100vw",
-        maxWidth: 400,
-        display: "flex",
-        gap: 4,
-        flexDirection: "column",
-      }}
-    >
-      {data.map((row, index) => (
-        <div
-          key={index}
-          style={{ display: "flex", gap: 4, justifyContent: "center" }}
-        >
-          {row.map((letter) => (
-            <div
-              key={letter}
-              style={getStyle(letter)}
-              onClick={() => onTypeLetter(letter)}
-            >
-              {letter}
-            </div>
-          ))}
-        </div>
-      ))}
     </div>
   );
 };
