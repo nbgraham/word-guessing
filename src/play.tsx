@@ -130,7 +130,7 @@ const Victory: React.FC<{
 
   const [copied, setCopied] = useState(false);
   const copySummary = async () => {
-    await navigator.clipboard.writeText(summary + "\n" + `Try for yourself at ${window.location.href}`);
+    await navigator.clipboard.writeText(summary + `\nTry for yourself at ${window.location.href}`);
     setCopied(true);
   };
 
