@@ -10,6 +10,7 @@ import React, {
 import { unique } from "./array";
 import { Observable, useObservable } from "./observable";
 import { fiveLetterWords, getRandomWord, isAWord } from "./words";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 
 const SIZE = 5;
 
@@ -36,6 +37,23 @@ function useAnswer() {
 }
 
 const App: React.FC = () => {
+  return (
+    <div className="App">
+      <nav>
+        <Link to="/play/new">Play</Link>&nbsp;|&nbsp;
+        <Link to="/words">Word Bank</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<Navigate replace to="/play/new" />} />
+        <Route path="words" element={<WordBank />} />
+        <Route path="play/new" element={<Play />} />
+        <Route path="play/:answerId" element={<Play />} />
+      </Routes>
+    </div>
+  );
+};
+
+const Play: React.FC = () => {
   const [answer, createNewAnswer] = useAnswer();
   const handleNewGame = createNewAnswer;
 
@@ -155,7 +173,6 @@ const Game: React.FC<{
         )}
       </div>
       <Keyboard disabledLetters={eliminatedLetters} />
-      <WordBank />
     </React.Fragment>
   );
 };
