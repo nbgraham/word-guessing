@@ -83,7 +83,8 @@ const Game: React.FC<{
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 5,
+        gap: 10,
+        paddingTop: 20
       }}
     >
       {!won && (
@@ -290,6 +291,7 @@ const Guess: React.FC<{
           onChange={(event) => setGuess(event.target.value)}
         />
         <div style={{ color: "red" }}>{errorMessage}</div>
+        <button type="submit">Submit</button>
       </form>
       <Keyboard
         disabledLetters={eliminatedLetters}
