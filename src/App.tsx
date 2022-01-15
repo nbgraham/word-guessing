@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route, Link, Navigate, useNavigate } from "react-router-dom";
-import { Play, PlayNew } from "./play";
-import { Settings } from "./settings";
+import { Play, PlayNew } from "./Play";
+import { Settings } from "./Settings";
 
 const App: React.FC = () => {
   const navigate = useNavigate();

@@ -11,7 +11,7 @@ import { unique } from "./array";
 import { useObservable } from "./observable";
 import { isAWord, useAnswer, useNewAnswer } from "./words";
 import { Navigate, useParams } from "react-router-dom";
-import { $allowNonWordGuesses } from "./settings";
+import { $allowNonWordGuesses } from "./Settings";
 
 const SIZE = 5;
 const BACKSPACE = "<";
