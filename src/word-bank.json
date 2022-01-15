@@ -1,4 +1,6 @@
-[
+{
+  "version": 1,
+  "words": [
     "which",
     "there",
     "their",
@@ -5756,3 +5758,4 @@
     "biffy",
     "pupal"
   ]
+}

@@ -1,23 +1,50 @@
 // https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt
-import fiveLetterWords from "./five-letter-words.json";
-export { fiveLetterWords };
+import { useEffect, useMemo, useState } from "react";
+import wordBank from "./word-bank.json";
 
-export async function getRandomWord(wordBank: string[]) {
+type Answer = {
+  answerId: number;
+  wordBankId: number;
+};
+export function useNewAnswer() {
+  const [answer, setAnswer] = useState<Answer>();
+  useEffect(() => {
+    pickNewAnswer().then(setAnswer);
+  }, []);
+  return answer;
+}
+
+export function useAnswer(answer: Answer) {
+  return useMemo(() => {
+    if (answer.wordBankId === wordBank.version) {
+      return wordBank.words[answer.answerId];
+    }
+  }, [answer]);
+}
+
+export async function pickNewAnswer(): Promise<Answer | undefined> {
   let tries = 0;
   while (tries < 10) {
     tries++;
-    const testWord = chooseRandomWord(wordBank);
-    if (await isAWord(testWord)) {
-      return testWord;
+    const { word, index } = chooseRandomWord(wordBank.words);
+    if (await isAWord(word)) {
+      return {
+        answerId: index,
+        wordBankId: wordBank.version,
+      };
     } else {
-      console.warn(`"${testWord}" is not a word. Looking for another word.`);
+      console.warn(`"${word}" is not a word. Looking for another word.`);
     }
   }
+  return undefined;
 }
 
 function chooseRandomWord(words: string[]) {
   const index = Math.floor(words.length * Math.random());
-  return words[index];
+  return {
+    word: words[index],
+    index,
+  };
 }
 
 export async function isAWord(word: string) {

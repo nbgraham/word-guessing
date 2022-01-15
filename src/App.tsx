@@ -9,53 +9,49 @@ import React, {
 } from "react";
 import { unique } from "./array";
 import { Observable, useObservable } from "./observable";
-import { fiveLetterWords, getRandomWord, isAWord } from "./words";
-import { Routes, Route, Link, Navigate } from "react-router-dom";
+import { isAWord, useAnswer, useNewAnswer } from "./words";
+import { Routes, Route, Link, Navigate, useParams } from "react-router-dom";
 
 const SIZE = 5;
 
 const $allowNonWordGuesses = new Observable(false);
-const $wordBank = new Observable(fiveLetterWords);
-
-function useAnswer() {
-  const [id, increment] = useReducer<Reducer<number, void>>(
-    (state) => state + 1,
-    0
-  );
-  const createNewAnswer = increment;
-
-  const [answer, setAnswer] = useState("");
-  const [wordBank] = useObservable($wordBank);
-  useEffect(() => {
-    getRandomWord(wordBank).then((_answer) => {
-      if (_answer) {
-        setAnswer(_answer.toUpperCase());
-      }
-    });
-  }, [wordBank, id]);
-  return [answer, createNewAnswer] as [string, () => void];
-}
 
 const App: React.FC = () => {
   return (
     <div className="App">
       <nav>
-        <Link to="/play/new">Play</Link>&nbsp;|&nbsp;
+        <Link to="/play/new">Play New Game</Link>&nbsp;|&nbsp;
         <Link to="/words">Word Bank</Link>
       </nav>
       <Routes>
         <Route path="/" element={<Navigate replace to="/play/new" />} />
         <Route path="words" element={<WordBank />} />
-        <Route path="play/new" element={<Play />} />
-        <Route path="play/:answerId" element={<Play />} />
+        <Route path="play/new" element={<PlayNew />} />
+        <Route path="play/:wordBankId/:answerId" element={<Play />} />
       </Routes>
     </div>
   );
 };
 
+const PlayNew: React.FC = () => {
+  const answer = useNewAnswer();
+  return answer === undefined ? (
+    <div>Loading Game...</div>
+  ) : (
+    <Navigate replace to={`/play/${answer.wordBankId}/${answer.answerId}`} />
+  );
+};
+
 const Play: React.FC = () => {
-  const [answer, createNewAnswer] = useAnswer();
-  const handleNewGame = createNewAnswer;
+  const { wordBankId, answerId } = useParams();
+  const answerObject = useMemo(
+    () => ({
+      wordBankId: Number(wordBankId),
+      answerId: Number(answerId),
+    }),
+    [wordBankId, answerId]
+  );
+  const answer = useAnswer(answerObject);
 
   const [allowNonWordGuesses, setAllowNonWordGuesses] =
     useObservable($allowNonWordGuesses);
@@ -81,16 +77,19 @@ const Play: React.FC = () => {
       </div>
 
       <div>
+        <h2>
+          Game ID {wordBankId}:{answerId}
+        </h2>
         <strong>Game Settings</strong>
         <Checkbox
           label="Allow non-word guesses"
           checked={allowNonWordGuesses}
           onChange={setAllowNonWordGuesses}
         />
-        <button onClick={handleNewGame}>Start New Game</button>
+        <Link to="/play/new">Start New Game</Link>
       </div>
 
-      <Game key={answer} answer={answer} />
+      {answer && <Game key={answer} answer={answer} />}
     </div>
   );
 };
@@ -326,7 +325,7 @@ const WordResult: React.FC<{
 };
 
 const WordBank: React.FC = () => {
-  const [wordBank, setWordBank] = useObservable($wordBank);
+  const [wordBank, setWordBank] = useState(["words"]); // TODO
   const [value, setValue] = useState(wordBank.join("\n"));
 
   const reset = () => setValue(wordBank.join("\n"));
