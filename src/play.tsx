@@ -84,7 +84,7 @@ const Game: React.FC<{
         flexDirection: "column",
         alignItems: "center",
         gap: 10,
-        paddingTop: 20
+        paddingTop: 20,
       }}
     >
       {!won && (
@@ -129,17 +129,16 @@ const Victory: React.FC<{
     [guesses]
   );
   const shareText = useMemo(
-    () =>
-      `I won in ${guesses.length} guesses:!\n` +
-      guessSummary +
-      `\nTry for yourself at ${window.location.href}`,
+    () => `I won in ${guesses.length} guesses!\n` + guessSummary,
     [guessSummary, guesses.length]
   );
 
   const canShare = typeof navigator.share === "function";
   const [copied, setCopied] = useState(false);
   const copyShareText = async () => {
-    await navigator.clipboard.writeText(shareText);
+    await navigator.clipboard.writeText(
+      shareText + `\nTry for yourself at ${window.location.href}`
+    );
     setCopied(true);
   };
 
