@@ -16,7 +16,7 @@ export function useNewAnswer() {
 export function useAnswer(answer: Answer) {
   return useMemo(() => {
     if (answer.wordBankId === wordBank.version) {
-      return wordBank.words[answer.answerId];
+      return wordBank.words[answer.answerId].toUpperCase();
     }
   }, [answer]);
 }
