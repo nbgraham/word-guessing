@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/word-guessing/static/js/main.6f75662d.js",
+    "index.html": "/word-guessing/index.html",
+    "main.6f75662d.js.map": "/word-guessing/static/js/main.6f75662d.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.6f75662d.js"
+  ]
+}
