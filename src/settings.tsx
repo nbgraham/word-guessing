@@ -1,25 +1,23 @@
+import { useNavigate } from "react-router-dom";
 import { Observable, useObservable } from "./observable";
 
 export const $allowNonWordGuesses = new Observable(false);
 
 export const Settings: React.FC = () => {
+  const navigate = useNavigate();
+
   const [allowNonWordGuesses, setAllowNonWordGuesses] =
     useObservable($allowNonWordGuesses);
-
-  const wordBankId = 0;
-  const answerId = 0;
 
   return (
     <div>
       <h2>Game Settings</h2>
-      <div>
-        Current Game ID {wordBankId}:{answerId}
-      </div>
       <Checkbox
         label="Allow non-word guesses"
         checked={allowNonWordGuesses}
         onChange={setAllowNonWordGuesses}
       />
+      <button onClick={() => navigate(-1)}>Back to game</button>
     </div>
   );
 };
