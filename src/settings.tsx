@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { Observable, useObservable } from "./observable";
 
 export const $allowNonWordGuesses = new Observable(false);
-export const $offlineMode = new Observable(false);
+export const $offlineMode = new Observable(!navigator.onLine);
 
 export const Settings: React.FC = () => {
   const navigate = useNavigate();
