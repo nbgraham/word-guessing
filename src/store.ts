@@ -1,6 +1,6 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
-import { unique } from "./array";
+import { unique } from "./utilities/array";
 
 export type CharacterStatus = {
   character: string;

@@ -5,8 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useObservable } from "./observable";
-import { isAWord, useAnswer, useNewAnswer } from "./words";
+import { useObservable } from "../utilities/observable";
+import { isAWord, useAnswer, useNewAnswer } from "../utilities/words";
 import { Navigate, useParams } from "react-router-dom";
 import { $allowNonWordGuesses } from "./Settings";
 import {
@@ -15,7 +15,7 @@ import {
   useAppDispatch,
   useAppSelector,
   WordStatus,
-} from "./store";
+} from "../store";
 
 const SIZE = 5;
 const BACKSPACE = "<";

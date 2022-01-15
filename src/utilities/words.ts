@@ -1,7 +1,7 @@
 // https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt
 import { useEffect, useMemo, useState } from "react";
-import { $offlineMode } from "./Settings";
-import wordBank from "./word-bank.json";
+import { $offlineMode } from "../components/Settings";
+import wordBank from "../assets/word-bank.json";
 
 export type Answer = {
   answerId: number;

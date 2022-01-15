@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Observable, useObservable } from "./observable";
+import { Observable, useObservable } from "../utilities/observable";
 
 export const $allowNonWordGuesses = new Observable(false);
 export const $offlineMode = new Observable(!navigator.onLine);
