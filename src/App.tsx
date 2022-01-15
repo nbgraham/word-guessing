@@ -144,10 +144,7 @@ const Game: React.FC<{
           <WordResult key={index} guessStatus={guess} />
         ))}
         {won ? (
-          <div>
-            You won!
-            <button onClick={onNewGame}>New Game?</button>
-          </div>
+          <Victory guesses={guesses} />
         ) : (
           <React.Fragment>
             <Guess key={guesses.length} onSubmitGuess={handleSubmitGuess} />
@@ -157,9 +154,42 @@ const Game: React.FC<{
           </React.Fragment>
         )}
       </div>
+      <Victory guesses={guesses} />
       <Keyboard disabledLetters={eliminatedLetters} />
       <WordBank />
     </React.Fragment>
+  );
+};
+
+const Victory: React.FC<{
+  guesses: WordStatus[];
+}> = ({ guesses }) => {
+  const summary = useMemo(
+    () =>
+      guesses
+        .map((guess) =>
+          guess
+            .map((letter) => {
+              if (letter.inPosition && letter.inWord) return "🟩";
+              if (letter.inWord) return "🟨";
+              return "⬛️";
+            })
+            .join("")
+        )
+        .join("\n"),
+    [guesses]
+  );
+
+  const copySummary = async () => {
+    await navigator.clipboard.writeText(summary);
+  };
+
+  return (
+    <div>
+      <p>You won!</p>
+      <pre>{summary}</pre>
+      <button onClick={copySummary}>Copy Results</button>
+    </div>
   );
 };
 
