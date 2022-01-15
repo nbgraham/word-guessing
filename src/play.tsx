@@ -58,11 +58,9 @@ export const Play: React.FC = () => {
 const Game: React.FC<{
   answer: string;
 }> = ({ answer }) => {
-  const answerState = useAppSelector(
-    (state) => state.answers[answer]
-  );
+  const answerState = useAppSelector((state) => state.answers[answer]);
   const guesses = answerState?.guesses ?? [];
-  const eliminatedLetters = answerState?.eliminatedLetters ?? []
+  const eliminatedLetters = answerState?.eliminatedLetters ?? [];
   const won = answerState?.won ?? false;
 
   const dispatch = useAppDispatch();
@@ -130,8 +128,10 @@ const Victory: React.FC<{
     [guesses]
   );
 
+  const [copied, setCopied] = useState(false);
   const copySummary = async () => {
-    await navigator.clipboard.writeText(summary);
+    await navigator.clipboard.writeText(summary + "\n" + `Try for yourself at ${window.location.href}`);
+    setCopied(true);
   };
 
   return (
@@ -139,6 +139,7 @@ const Victory: React.FC<{
       <p>You won!</p>
       <pre>{summary}</pre>
       <button onClick={copySummary}>Copy Results</button>
+      {copied && <div>Copied!</div>}
     </div>
   );
 };
