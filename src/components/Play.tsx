@@ -4,9 +4,10 @@ import { Navigate } from "react-router-dom";
 import { Spinner } from "./Spinner";
 import { Game } from "./Game";
 import { routes, useAnswerInfoParams } from "../routes";
+import { WordBank } from "../utilities/word-service";
 
-export const PlayNew: React.FC = () => {
-  const answer = useNewAnswer();
+export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
+  const answer = useNewAnswer(wordBank);
   return answer === undefined ? (
     <div>
       Loading Game <Spinner size={15} />
@@ -16,9 +17,9 @@ export const PlayNew: React.FC = () => {
   );
 };
 
-export const Play: React.FC = () => {
+export const Play: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
   const answerInfo = useAnswerInfoParams();
-  const answer = useAnswer(answerInfo);
+  const answer = useAnswer(wordBank, answerInfo);
 
   return (
     <div

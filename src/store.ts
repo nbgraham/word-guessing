@@ -1,6 +1,7 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import { unique } from "./utilities/array";
+import type { WordBank } from "./utilities/word-service";
 
 export type CharacterStatus = {
   character: string;
@@ -23,6 +24,7 @@ export interface GameState {
     guessesMustBeValidWords: boolean;
     playOffline: boolean;
   };
+  wordBank?: WordBank;
 }
 
 const initialState: GameState = {
@@ -85,6 +87,9 @@ export const gameSlice = createSlice({
     setGuessesMustBeValidWords(state, action: PayloadAction<boolean>) {
       state.settings.guessesMustBeValidWords = action.payload;
     },
+    setWordBank(state, action: PayloadAction<WordBank>) {
+      state.wordBank = action.payload;
+    }
   },
 });
 
