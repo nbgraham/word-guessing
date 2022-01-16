@@ -1,11 +1,31 @@
-import { useMemo, useState } from "react";
+import React, {
+  Reducer,
+  useEffect,
+  useMemo,
+  useState,
+  useReducer,
+} from "react";
+import { useAppSelector } from "../store";
 import { WordStatus } from "../utilities/types";
+import { getDefinition, WordResult } from "../utilities/word-service";
 
 const canShare = typeof navigator.share === "function";
 
+function useDefinition(word: string) {
+  const playOffline = useAppSelector((state) => state.settings.playOffline);
+  const [definition, setDefinition] = useState<WordResult[]>();
+  useEffect(() => {
+    if (!playOffline) {
+      getDefinition(word).then(setDefinition);
+    }
+  }, [playOffline, word]);
+  return definition;
+}
+
 const Victory: React.FC<{
   guesses: WordStatus[];
-}> = ({ guesses }) => {
+  answer: string;
+}> = ({ guesses, answer }) => {
   const guessSummary = useMemo(
     () =>
       guesses
@@ -42,16 +62,47 @@ const Victory: React.FC<{
     });
   };
 
+  const definition = useDefinition(answer);
+
   return (
     <div>
       <p>You won!</p>
       <pre>{guessSummary}</pre>
-      {canShare ? (
-        <button onClick={share}>Share</button>
-      ) : (
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        {canShare && <button onClick={share}>Share</button>}
         <button onClick={copyShareText}>Copy Share Text</button>
+        {copied && <div>Copied!</div>}
+        {definition && <Definition definition={definition} />}
+      </div>
+    </div>
+  );
+};
+
+const Definition: React.FC<{ definition: WordResult[] }> = ({ definition }) => {
+  const [show, toggle] = useReducer<Reducer<boolean, void>>(
+    (state) => !state,
+    false
+  );
+
+  const meanings = useMemo(() => definition[0].meanings, [definition]);
+
+  return (
+    <div>
+      <button onClick={toggle}>{show ? "Hide" : "Show"} Definition</button>
+      {show && (
+        <div>
+          {meanings.map((meaning) => (
+            <div>
+              <h4>{meaning.partOfSpeech}</h4>
+              <ul>
+                {meaning.definitions.map((definition) => (
+                  <li>{definition.definition}</li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
       )}
-      {copied && <div>Copied!</div>}
     </div>
   );
 };

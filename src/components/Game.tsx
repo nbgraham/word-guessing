@@ -48,7 +48,7 @@ const Game: React.FC<{
         <WordResult key={index} guessStatus={guess} />
       ))}
       {won ? (
-        <Victory guesses={guesses} />
+        <Victory guesses={guesses} answer={answer} />
       ) : (
         <Guess
           key={guesses.length}
