@@ -1,5 +1,5 @@
 import React from "react";
-import { useAnswer, useNewAnswer } from "../utilities/words";
+import { useAnswer, useNewAnswer } from "../utilities/answers";
 import { Navigate } from "react-router-dom";
 import { Spinner } from "./Spinner";
 import { Game } from "./Game";

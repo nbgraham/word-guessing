@@ -1,6 +1,6 @@
 import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import { useObservable } from "../utilities/observable";
-import { isAWord } from "../utilities/words";
+import { isAWord } from "../utilities/word-service";
 import { $allowNonWordGuesses } from "./Settings";
 import {
   actions,
