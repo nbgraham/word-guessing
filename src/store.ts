@@ -19,10 +19,18 @@ export interface GameState {
       won?: boolean;
     }
   >;
+  settings: {
+    guessesMustBeValidWords: boolean;
+    playOffline: boolean;
+  };
 }
 
 const initialState: GameState = {
   answers: {},
+  settings: {
+    guessesMustBeValidWords: false,
+    playOffline: !navigator.onLine,
+  },
 };
 
 export const gameSlice = createSlice({
@@ -67,6 +75,15 @@ export const gameSlice = createSlice({
       ]);
 
       state.answers[answer].guesses.push(status);
+    },
+    setPlayOffline(state, action: PayloadAction<boolean>) {
+      state.settings.playOffline = action.payload;
+      if (action.payload) {
+        state.settings.guessesMustBeValidWords = false;
+      }
+    },
+    setGuessesMustBeValidWords(state, action: PayloadAction<boolean>) {
+      state.settings.guessesMustBeValidWords = action.payload;
     },
   },
 });

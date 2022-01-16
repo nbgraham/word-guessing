@@ -1,7 +1,5 @@
 import React, { FormEventHandler, useEffect, useRef, useState } from "react";
-import { useObservable } from "../utilities/observable";
 import { isAWord } from "../utilities/word-service";
-import { $allowNonWordGuesses } from "./Settings";
 import {
   actions,
   CharacterStatus,
@@ -76,11 +74,11 @@ const Guess: React.FC<{
   const [guess, setGuess] = useState("");
   const [validating, setValidating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [allowNonWordGuesses] = useObservable($allowNonWordGuesses);
+  const guessesMustBeValidWords = useAppSelector(state => state.settings.guessesMustBeValidWords);
 
   const validate = async (value: string) => {
     setValidating(true);
-    const isValid = allowNonWordGuesses || (await isAWord(value));
+    const isValid = !guessesMustBeValidWords || (await isAWord(value));
     setErrorMessage(isValid ? "" : `"${value}" is not an English word`);
     setValidating(false);
     return isValid;

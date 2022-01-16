@@ -1,29 +1,26 @@
 import { useNavigate } from "react-router-dom";
-import { Observable, useObservable } from "../utilities/observable";
-
-export const $allowNonWordGuesses = new Observable(false);
-export const $offlineMode = new Observable(!navigator.onLine);
+import { actions, useAppDispatch, useAppSelector } from "../store";
 
 export const Settings: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
-  const [allowNonWordGuesses, setAllowNonWordGuesses] =
-    useObservable($allowNonWordGuesses);
-  const [offlineMode, setofflineMode] = useObservable($offlineMode);
+  const settings = useAppSelector((state) => state.settings);
+  const { guessesMustBeValidWords, playOffline } = settings;
 
   return (
     <div>
       <h2>Game Settings</h2>
       <Checkbox
         label="Play offline"
-        checked={offlineMode}
-        onChange={setofflineMode}
+        checked={playOffline}
+        onChange={(checked) => dispatch(actions.setPlayOffline(checked))}
       />
       <Checkbox
-        label="Allow non-word guesses"
-        disabled={offlineMode}
-        checked={offlineMode || allowNonWordGuesses}
-        onChange={setAllowNonWordGuesses}
+        label="Allow non-word guesses (Don't validate guesses)"
+        disabled={playOffline}
+        checked={!guessesMustBeValidWords}
+        onChange={(checked) => dispatch(actions.setGuessesMustBeValidWords(!checked))}
       />
       <button onClick={() => navigate(-1)}>Back to game</button>
     </div>

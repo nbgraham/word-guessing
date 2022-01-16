@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { isAWord } from "./word-service";
 import wordBank from "../assets/word-bank.json"; // https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt
+import { useAppSelector } from "../store";
 
 export type AnswerInfo = {
   answerId: number;
@@ -8,9 +9,12 @@ export type AnswerInfo = {
 };
 export function useNewAnswer() {
   const [answer, setAnswer] = useState<AnswerInfo>();
+  const guessesMustBeValidWords = useAppSelector(
+    (state) => state.settings.guessesMustBeValidWords
+  );
   useEffect(() => {
-    pickNewAnswer().then(setAnswer);
-  }, []);
+    pickNewAnswer(guessesMustBeValidWords).then(setAnswer);
+  }, [guessesMustBeValidWords]);
   return answer;
 }
 export function useAnswer(answer: AnswerInfo) {
@@ -21,12 +25,14 @@ export function useAnswer(answer: AnswerInfo) {
   }, [answer]);
 }
 
-export async function pickNewAnswer(): Promise<AnswerInfo | undefined> {
+export async function pickNewAnswer(
+  mustBeValidWord = true
+): Promise<AnswerInfo | undefined> {
   let tries = 0;
   while (tries < 10) {
     tries++;
     const { word, index } = chooseRandomWord(wordBank.words);
-    if (await isAWord(word)) {
+    if (!mustBeValidWord || (await isAWord(word))) {
       return {
         answerId: index,
         wordBankId: wordBank.version,
