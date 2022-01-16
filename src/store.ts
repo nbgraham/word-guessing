@@ -1,14 +1,8 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import { unique } from "./utilities/array";
+import { WordStatus } from "./utilities/types";
 import type { WordBank } from "./utilities/word-service";
-
-export type CharacterStatus = {
-  character: string;
-  inWord: boolean;
-  inPosition: boolean;
-};
-export type WordStatus = CharacterStatus[];
 
 export interface GameState {
   answers: Record<
@@ -89,7 +83,7 @@ export const gameSlice = createSlice({
     },
     setWordBank(state, action: PayloadAction<WordBank>) {
       state.wordBank = action.payload;
-    }
+    },
   },
 });
 

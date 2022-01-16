@@ -1,15 +1,10 @@
 import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import { isAWord } from "../utilities/word-service";
-import {
-  actions,
-  CharacterStatus,
-  useAppDispatch,
-  useAppSelector,
-  WordStatus,
-} from "../store";
+import { actions, useAppDispatch, useAppSelector } from "../store";
 import { BACKSPACE, SUBMIT, Keyboard } from "./Keyboard";
 import { Spinner } from "./Spinner";
 import { Victory } from "./Victory";
+import { CharacterStatus, WordStatus } from "../utilities/types";
 
 const SIZE = 5;
 
@@ -74,7 +69,9 @@ const Guess: React.FC<{
   const [guess, setGuess] = useState("");
   const [validating, setValidating] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const guessesMustBeValidWords = useAppSelector(state => state.settings.guessesMustBeValidWords);
+  const guessesMustBeValidWords = useAppSelector(
+    (state) => state.settings.guessesMustBeValidWords
+  );
 
   const validate = async (value: string) => {
     setValidating(true);

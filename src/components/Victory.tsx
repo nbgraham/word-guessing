@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import type { WordStatus } from "../store";
+import { WordStatus } from "../utilities/types";
 
 const canShare = typeof navigator.share === "function";
 
