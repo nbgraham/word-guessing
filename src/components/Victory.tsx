@@ -3,7 +3,7 @@ import { WordStatus } from "../utilities/types";
 
 const canShare = typeof navigator.share === "function";
 
-export const Victory: React.FC<{
+const Victory: React.FC<{
   guesses: WordStatus[];
 }> = ({ guesses }) => {
   const guessSummary = useMemo(
@@ -55,3 +55,5 @@ export const Victory: React.FC<{
     </div>
   );
 };
+
+export default Victory;

@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-export const Instructions: React.FC = () => {
+const Instructions: React.FC = () => {
   const navigate = useNavigate();
 
   return (
@@ -16,3 +16,5 @@ export const Instructions: React.FC = () => {
     </div>
   );
 };
+
+export default Instructions;

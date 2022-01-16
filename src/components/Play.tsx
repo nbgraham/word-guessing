@@ -1,10 +1,10 @@
 import React from "react";
 import { useAnswer, useNewAnswer } from "../utilities/answers";
 import { Navigate } from "react-router-dom";
-import { Spinner } from "./Spinner";
-import { Game } from "./Game";
+import Spinner from "./Spinner";
+import Game from "./Game";
 import { routes, useAnswerInfoParams } from "../routes";
-import { WordBank } from "../utilities/word-service";
+import type { WordBank } from "../utilities/word-service";
 
 export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
   const answer = useNewAnswer(wordBank);

@@ -3,10 +3,10 @@ import { Routes, Route, Link, Navigate } from "react-router-dom";
 import { routes } from "../routes";
 import { actions, useAppDispatch, useAppSelector } from "../store";
 import { getWordBank } from "../utilities/word-service";
-import { Instructions } from "./Instructions";
+import Instructions from "./Instructions";
+import Settings from "./Settings";
+import Spinner from "./Spinner";
 import { Play, PlayNew } from "./Play";
-import { Settings } from "./Settings";
-import { Spinner } from "./Spinner";
 
 const wordBankPromise = getWordBank();
 function useWordBank() {

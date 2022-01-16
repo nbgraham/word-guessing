@@ -1,14 +1,14 @@
 import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import { isAWord } from "../utilities/word-service";
 import { actions, useAppDispatch, useAppSelector } from "../store";
-import { BACKSPACE, SUBMIT, Keyboard } from "./Keyboard";
-import { Spinner } from "./Spinner";
-import { Victory } from "./Victory";
+import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
+import Spinner from "./Spinner";
+import Victory from "./Victory";
 import { CharacterStatus, WordStatus } from "../utilities/types";
 
 const SIZE = 5;
 
-export const Game: React.FC<{
+const Game: React.FC<{
   answer: string;
 }> = ({ answer }) => {
   const answerState = useAppSelector((state) => state.answers[answer]);
@@ -171,3 +171,5 @@ const WordResult: React.FC<{
     </div>
   );
 };
+
+export default Game;

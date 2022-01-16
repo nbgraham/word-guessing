@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { actions, useAppDispatch, useAppSelector } from "../store";
 
-export const Settings: React.FC = () => {
+const Settings: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -50,3 +50,5 @@ const Checkbox: React.FC<{
     </div>
   );
 };
+
+export default Settings;

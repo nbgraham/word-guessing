@@ -9,7 +9,7 @@ const data = [
   ["Z", "X", "C", "V", "B", "N", "M", BACKSPACE, SUBMIT],
 ];
 
-export const Keyboard: React.FC<{
+const Keyboard: React.FC<{
   disabledLetters: string[];
   highlightedLetters: string[];
   onTypeLetter: (letter: string) => void;
@@ -81,3 +81,5 @@ const Letter: React.FC<{
     </div>
   );
 };
+
+export default Keyboard;
