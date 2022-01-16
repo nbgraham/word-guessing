@@ -3,18 +3,18 @@ import { useEffect, useMemo, useState } from "react";
 import { $offlineMode } from "../components/Settings";
 import wordBank from "../assets/word-bank.json";
 
-export type Answer = {
+export type AnswerInfo = {
   answerId: number;
   wordBankId: number;
 };
 export function useNewAnswer() {
-  const [answer, setAnswer] = useState<Answer>();
+  const [answer, setAnswer] = useState<AnswerInfo>();
   useEffect(() => {
     pickNewAnswer().then(setAnswer);
   }, []);
   return answer;
 }
-export function useAnswer(answer: Answer) {
+export function useAnswer(answer: AnswerInfo) {
   return useMemo(() => {
     if (answer.wordBankId === wordBank.version) {
       return wordBank.words[answer.answerId].toUpperCase();
@@ -22,7 +22,7 @@ export function useAnswer(answer: Answer) {
   }, [answer]);
 }
 
-export async function pickNewAnswer(): Promise<Answer | undefined> {
+export async function pickNewAnswer(): Promise<AnswerInfo | undefined> {
   let tries = 0;
   while (tries < 10) {
     tries++;

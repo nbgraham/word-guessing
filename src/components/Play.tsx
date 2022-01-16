@@ -1,10 +1,9 @@
-import React, {
-  useMemo,
-} from "react";
+import React from "react";
 import { useAnswer, useNewAnswer } from "../utilities/words";
-import { Navigate, useParams } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { Spinner } from "./Spinner";
 import { Game } from "./Game";
+import { routes, useAnswerInfoParams } from "../routes";
 
 export const PlayNew: React.FC = () => {
   const answer = useNewAnswer();
@@ -13,20 +12,13 @@ export const PlayNew: React.FC = () => {
       Loading Game <Spinner size={15} />
     </div>
   ) : (
-    <Navigate replace to={`/play/${answer.wordBankId}/${answer.answerId}`} />
+    <Navigate replace to={routes.playInstance(answer)} />
   );
 };
 
 export const Play: React.FC = () => {
-  const { wordBankId, answerId } = useParams();
-  const answerObject = useMemo(
-    () => ({
-      wordBankId: Number(wordBankId),
-      answerId: Number(answerId),
-    }),
-    [wordBankId, answerId]
-  );
-  const answer = useAnswer(answerObject);
+  const answerInfo = useAnswerInfoParams();
+  const answer = useAnswer(answerInfo);
 
   return (
     <div
