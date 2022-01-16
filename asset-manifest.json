@@ -1,11 +1,11 @@
 {
   "files": {
-    "main.js": "/word-guessing/static/js/main.a312aac0.js",
+    "main.js": "/word-guessing/static/js/main.42fa31d0.js",
     "static/media/spinner.gif": "/word-guessing/static/media/spinner.8a8b53e0aa92165a507f.gif",
     "index.html": "/word-guessing/index.html",
-    "main.a312aac0.js.map": "/word-guessing/static/js/main.a312aac0.js.map"
+    "main.42fa31d0.js.map": "/word-guessing/static/js/main.42fa31d0.js.map"
   },
   "entrypoints": [
-    "static/js/main.a312aac0.js"
+    "static/js/main.42fa31d0.js"
   ]
 }
