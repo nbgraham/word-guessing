@@ -1,6 +1,7 @@
 import { configureStore, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 import { unique } from "./utilities/array";
+import { evaluateGuess } from "./utilities/guess";
 import { WordStatus } from "./utilities/types";
 import type { WordBank } from "./utilities/word-service";
 
@@ -38,39 +39,30 @@ export const gameSlice = createSlice({
       action: PayloadAction<{ guess: string; answer: string }>
     ) => {
       const { guess, answer } = action.payload;
+
+      // Ensure the answer exists in state, or create it
       state.answers[answer] ??= {
         guesses: [],
         eliminatedLetters: [],
         foundLetters: [],
       };
-      const status: WordStatus = guess
-        .toUpperCase()
-        .split("")
-        .map((character, i) => ({
-          character,
-          inWord: answer.includes(character),
-          inPosition: answer[i] === character,
-        }));
+      const answerState = state.answers[answer];
 
-      state.answers[answer].won = guess.toUpperCase() === answer.toUpperCase();
+      const { eliminatedLetters, foundLetters, status } = evaluateGuess(
+        guess,
+        answer
+      );
 
-      const eliminatedLetters = status
-        .filter((s) => !s.inWord)
-        .map((s) => s.character);
-      state.answers[answer].eliminatedLetters = unique([
-        ...state.answers[answer].eliminatedLetters,
+      answerState.won = guess.toUpperCase() === answer.toUpperCase();
+      answerState.guesses.push(status);
+      answerState.eliminatedLetters = unique([
+        ...answerState.eliminatedLetters,
         ...eliminatedLetters,
       ]);
-
-      const foundLetters = status
-        .filter((s) => s.inWord)
-        .map((s) => s.character);
-      state.answers[answer].foundLetters = unique([
-        ...state.answers[answer].foundLetters,
+      answerState.foundLetters = unique([
+        ...answerState.foundLetters,
         ...foundLetters,
       ]);
-
-      state.answers[answer].guesses.push(status);
     },
     setPlayOffline(state, action: PayloadAction<boolean>) {
       state.settings.playOffline = action.payload;
