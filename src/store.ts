@@ -34,19 +34,25 @@ export const gameSlice = createSlice({
   name: "game",
   initialState,
   reducers: {
-    submitGuess: (
-      state,
-      action: PayloadAction<{ guess: string; answer: string }>
-    ) => {
-      const { guess, answer } = action.payload;
-
-      // Ensure the answer exists in state, or create it
-      state.answers[answer] ??= {
+    pickAnswer(state, action: PayloadAction<string>) {
+      if (state.answers[action.payload]) {
+        console.warn("Answer already exists in state");
+        return;
+      }
+      state.answers[action.payload] = {
         guesses: [],
         eliminatedLetters: [],
         foundLetters: [],
       };
+    },
+    submitGuess(
+      state,
+      action: PayloadAction<{ guess: string; answer: string }>
+    ) {
+      const { guess, answer } = action.payload;
       const answerState = state.answers[answer];
+      if (!answerState)
+        throw new Error("No entry in state for the requested answer");
 
       const { eliminatedLetters, foundLetters, status } = evaluateGuess(
         guess,
