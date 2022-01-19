@@ -7,6 +7,7 @@ import Victory from "./Victory";
 import { CharacterStatus, WordStatus } from "../utilities/types";
 
 const SIZE = 5;
+const PATTERN = "^[a-zA-Z]*$";
 
 const Game: React.FC<{
   answer: string;
@@ -66,37 +67,55 @@ const Guess: React.FC<{
   eliminatedLetters: string[];
   foundLetters: string[];
 }> = ({ onSubmitGuess, eliminatedLetters, foundLetters }) => {
-  const [guess, setGuess] = useState("");
-  const [validating, setValidating] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
+  const [guess, _setGuess] = useState("");
+  const setGuess = (g: string) => _setGuess(g.substring(0, SIZE));
+  const [submitting, setSubmitting] = useState(false);
   const guessesMustBeValidWords = useAppSelector(
     (state) => state.settings.guessesMustBeValidWords
   );
 
-  const validate = async (value: string) => {
-    setValidating(true);
-    const isValid = !guessesMustBeValidWords || (await isAWord(value));
-    setErrorMessage(isValid ? "" : `"${value}" is not an English word`);
-    setValidating(false);
-    return isValid;
-  };
-
-  const handleSubmit: FormEventHandler = async (event) => {
-    event.preventDefault();
-    await submitGuess();
-  };
-  const submitGuess = async () => {
-    if (await validate(guess)) {
-      onSubmitGuess?.(guess);
-    }
-  };
-
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
+    inputRef.current?.focus();
   }, [inputRef]);
+
+  const handleSubmit: FormEventHandler = async () => {
+    if (submitting) return false;
+    setSubmitting(true);
+
+    if (!formRef.current?.checkValidity()) {
+      alert("Invalid form");
+    } else {
+      const errorMessage = await asyncValidation(guess);
+      inputRef.current?.setCustomValidity(errorMessage || "");
+      if (!errorMessage) {
+        onSubmitGuess(guess);
+      } else {
+        inputRef.current?.reportValidity();
+        formRef.current?.requestSubmit();
+      }
+    }
+
+    setSubmitting(false);
+    return false;
+  };
+  const asyncValidation = async (value: string) => {
+    if (guessesMustBeValidWords && !(await isAWord(value)))
+      return `"${value}" is not an English word`;
+  };
+
+  useEffect(() => {
+    inputRef.current?.setCustomValidity(realTimeValidation(guess));
+  }, [guess]);
+  const realTimeValidation = (value: string) => {
+    if (value.length < SIZE)
+      return `Too short, must be more than ${SIZE} characters`;
+    if (value.length > SIZE)
+      return `Too long, must be less than ${SIZE} characters`;
+    if (!new RegExp(PATTERN).test(value)) return "Only letters are allowed";
+    return "";
+  };
 
   const handleTypeLetter = (letter: string) => {
     switch (letter) {
@@ -104,7 +123,7 @@ const Guess: React.FC<{
         setGuess(guess.substring(0, guess.length - 1));
         break;
       case SUBMIT:
-        submitGuess();
+        formRef.current?.requestSubmit();
         break;
       default:
         setGuess(guess + letter);
@@ -114,23 +133,22 @@ const Guess: React.FC<{
 
   return (
     <React.Fragment>
-      <form onSubmit={handleSubmit}>
+      <form ref={formRef} onSubmit={handleSubmit}>
         <input
           ref={inputRef}
           placeholder="Guess"
-          required={true}
-          disabled={validating}
+          disabled={submitting}
           type="text"
-          pattern="^[a-zA-Z]*$"
           title="Only letters are allowed"
+          required={true}
+          pattern={PATTERN}
           minLength={SIZE}
           maxLength={SIZE}
           value={guess}
           onChange={(event) => setGuess(event.target.value)}
         />
-        {validating && <Spinner size={15} />}
-        <div style={{ color: "red" }}>{errorMessage}</div>
-        <button disabled={validating} type="submit">
+        {submitting && <Spinner size={15} />}
+        <button disabled={submitting} type="submit">
           Submit
         </button>
       </form>
