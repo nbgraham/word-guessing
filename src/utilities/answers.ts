@@ -2,6 +2,22 @@ import { useEffect, useMemo, useState } from "react";
 import { isAWord, WordBank } from "./word-service";
 import { useAppSelector } from "../store";
 
+class CancellablePromise<T> {
+  _reject?: (reason?: any) => void;
+  promise: Promise<T>;
+
+  constructor(promise: Promise<T>) {
+    this.promise = new Promise<T>((resolve, reject) => {
+      this._reject = reject;
+      promise.then(resolve).catch(reject);
+    });
+  }
+
+  cancel(reason?: any) {
+    this._reject?.(reason);
+  }
+}
+
 export type AnswerInfo = {
   answerId: number;
   wordBankId: number;
@@ -13,7 +29,12 @@ export function useNewAnswer(wordBank: WordBank | undefined) {
   );
   useEffect(() => {
     if (wordBank) {
-      pickNewAnswer(wordBank, guessesMustBeValidWords).then(setAnswer);
+      const cancellable = new CancellablePromise(
+        pickNewAnswer(wordBank, guessesMustBeValidWords)
+      );
+      cancellable.promise.then(setAnswer).catch(console.warn);
+      return () =>
+        cancellable.cancel("Promise cancelled as part of useEffect cleanup");
     }
   }, [guessesMustBeValidWords, wordBank]);
   return answer;
