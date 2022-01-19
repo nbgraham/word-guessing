@@ -2,21 +2,17 @@ import React, { useEffect } from "react";
 import { Routes, Route, Link, Navigate } from "react-router-dom";
 import { routes } from "../routes";
 import { useAppDispatch, useAppSelector } from "../store";
-import { getWordBank } from "../utilities/word-service";
 import Instructions from "./Instructions";
 import Settings from "./Settings";
 import Spinner from "./Spinner";
 import { Play, PlayNew } from "./Play";
-import gameSlice from "../store/gameSlice";
+import { fetchWordBank } from "../store/gameSlice";
 
-const wordBankPromise = getWordBank();
 function useWordBank() {
   const wordBank = useAppSelector((state) => state.game.wordBank);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    wordBankPromise.then((_wordBank) =>
-      dispatch(gameSlice.actions.setWordBank(_wordBank))
-    );
+    dispatch(fetchWordBank());
   }, [dispatch]);
   return wordBank;
 }

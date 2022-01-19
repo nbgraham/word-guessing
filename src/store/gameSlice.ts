@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { unique } from "../utilities/array";
 import { evaluateGuess } from "../utilities/guess";
 import { WordStatus, AnswerInfo } from "../utilities/types";
-import { WordBank, isAWord } from "../utilities/word-service";
+import { WordBank, isAWord, getWordBank } from "../utilities/word-service";
 
 type GameState = {
   answers: Record<
@@ -56,9 +56,6 @@ const gameSlice = createSlice({
         ...foundLetters,
       ]);
     },
-    setWordBank(state, action: PayloadAction<WordBank>) {
-      state.wordBank = action.payload;
-    },
     startGame(state, action: PayloadAction<AnswerInfo>) {
       const { wordBank } = state;
       const answerInfo = action.payload;
@@ -73,6 +70,9 @@ const gameSlice = createSlice({
     builder.addCase(pickNewAnswer.fulfilled, (state, action) => {
       state.newAnswerInfo = action.payload;
     });
+    builder.addCase(fetchWordBank.fulfilled, (state, action) => {
+        state.wordBank = action.payload;
+    })
   },
 });
 export default gameSlice;
@@ -105,3 +105,5 @@ export const pickNewAnswer = createAsyncThunk(
     throw new Error("Ran out of tries to pick a new answer");
   }
 );
+
+export const fetchWordBank = createAsyncThunk("game/fetchWordBank", () => getWordBank());
