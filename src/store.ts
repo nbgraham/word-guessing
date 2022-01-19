@@ -36,7 +36,7 @@ export const gameSlice = createSlice({
   reducers: {
     pickAnswer(state, action: PayloadAction<string>) {
       if (state.answers[action.payload]) {
-        console.warn("Answer already exists in state");
+        console.warn("Answer already exists in state store");
         return;
       }
       state.answers[action.payload] = {
