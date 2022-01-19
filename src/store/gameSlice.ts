@@ -15,7 +15,7 @@ type GameState = {
     }
   >;
   wordBank?: WordBank;
-  newAnswer?: AnswerInfo;
+  newAnswerInfo?: AnswerInfo;
   answer?: string;
 };
 
@@ -66,15 +66,12 @@ const gameSlice = createSlice({
         answerInfo && wordBank && wordBank.version === answerInfo.wordBankId
           ? wordBank.words[answerInfo.answerId].toUpperCase()
           : undefined;
-      state.newAnswer = undefined;
+      state.newAnswerInfo = undefined;
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(pickNewAnswer.pending, (state) => {
-      state.newAnswer = undefined;
-    });
     builder.addCase(pickNewAnswer.fulfilled, (state, action) => {
-      state.newAnswer = action.payload;
+      state.newAnswerInfo = action.payload;
     });
   },
 });

@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../store";
 import gameSlice, { pickNewAnswer } from "../store/gameSlice";
 
 export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
-  const newAnswer = useAppSelector((state) => state.game.newAnswer);
+  const newAnswerInfo = useAppSelector((state) => state.game.newAnswerInfo);
   const mustBeValidWord = useAppSelector(
     (state) => state.settings.guessesMustBeValidWords
   );
@@ -18,12 +18,12 @@ export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
     dispatch(pickNewAnswer({ wordBank, mustBeValidWord }));
   }, [dispatch, wordBank, mustBeValidWord]);
 
-  return newAnswer === undefined ? (
+  return newAnswerInfo === undefined ? (
     <div>
       Loading Game <Spinner size={15} />
     </div>
   ) : (
-    <Navigate replace to={routes.playInstance(newAnswer)} />
+    <Navigate replace to={routes.playInstance(newAnswerInfo)} />
   );
 };
 
