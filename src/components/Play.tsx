@@ -1,31 +1,43 @@
 import React, { useEffect } from "react";
-import { useAnswer, useNewAnswer } from "../utilities/answers";
 import { Navigate } from "react-router-dom";
 import Spinner from "./Spinner";
 import Game from "./Game";
 import { routes, useAnswerInfoParams } from "../routes";
 import type { WordBank } from "../utilities/word-service";
-import { actions, useAppDispatch } from "../store";
+import {
+  actions,
+  pickNewAnswer,
+  useAppDispatch,
+  useAppSelector,
+} from "../store";
 
 export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
-  const answer = useNewAnswer(wordBank);
-  return answer === undefined ? (
+  const newAnswer = useAppSelector((state) => state.game.newAnswer);
+  const mustBeValidWord = useAppSelector(
+    (state) => state.settings.guessesMustBeValidWords
+  );
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(pickNewAnswer({ wordBank, mustBeValidWord }));
+  }, [dispatch, wordBank, mustBeValidWord]);
+
+  return newAnswer === undefined ? (
     <div>
       Loading Game <Spinner size={15} />
     </div>
   ) : (
-    <Navigate replace to={routes.playInstance(answer)} />
+    <Navigate replace to={routes.playInstance(newAnswer)} />
   );
 };
 
-export const Play: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
+export const Play: React.FC = () => {
   const answerInfo = useAnswerInfoParams();
-  const answer = useAnswer(wordBank, answerInfo);
-
+  const answer = useAppSelector(state => state.game.answer);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    if (answer) dispatch(actions.pickAnswer(answer));
-  }, [answer, dispatch]);
+    dispatch(actions.startGame(answerInfo));
+  }, [dispatch, answerInfo]);
 
   return (
     <div

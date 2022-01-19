@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useParams } from "react-router-dom";
-import type { AnswerInfo } from "./utilities/answers";
+import type { AnswerInfo } from "./utilities/types";
 
 const params = {
     wordBankId: 'wordBankId',

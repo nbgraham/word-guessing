@@ -10,7 +10,7 @@ import { Play, PlayNew } from "./Play";
 
 const wordBankPromise = getWordBank();
 function useWordBank() {
-  const wordBank = useAppSelector((state) => state.wordBank);
+  const wordBank = useAppSelector((state) => state.game.wordBank);
   const dispatch = useAppDispatch();
   useEffect(() => {
     wordBankPromise.then((_wordBank) =>
@@ -48,7 +48,7 @@ const App: React.FC = () => {
           path={routes.playNew}
           element={<PlayNew wordBank={wordBank} />}
         />
-        <Route path={routes.play} element={<Play wordBank={wordBank} />} />
+        <Route path={routes.play} element={<Play />} />
       </Routes>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { actions, useAppDispatch, useAppSelector } from "../store";
+import { settingsActions, useAppDispatch, useAppSelector } from "../store";
 
 const Settings: React.FC = () => {
   const navigate = useNavigate();
@@ -14,13 +14,13 @@ const Settings: React.FC = () => {
       <Checkbox
         label="Play offline"
         checked={playOffline}
-        onChange={(checked) => dispatch(actions.setPlayOffline(checked))}
+        onChange={(checked) => dispatch(settingsActions.setPlayOffline(checked))}
       />
       <Checkbox
         label="Allow non-word guesses (Don't validate guesses)"
         disabled={playOffline}
         checked={!guessesMustBeValidWords}
-        onChange={(checked) => dispatch(actions.setGuessesMustBeValidWords(!checked))}
+        onChange={(checked) => dispatch(settingsActions.setGuessesMustBeValidWords(!checked))}
       />
       <button onClick={() => navigate(-1)}>Back to game</button>
     </div>

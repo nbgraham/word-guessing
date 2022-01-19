@@ -12,7 +12,7 @@ const PATTERN = "^[a-zA-Z]*$";
 const Game: React.FC<{
   answer: string;
 }> = ({ answer }) => {
-  const answerState = useAppSelector((state) => state.answers[answer]);
+  const answerState = useAppSelector((state) => state.game.answers[answer]);
   const guesses = answerState?.guesses ?? [];
   const eliminatedLetters = answerState?.eliminatedLetters ?? [];
   const foundLetters = answerState?.foundLetters ?? [];

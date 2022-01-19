@@ -4,3 +4,7 @@ export type CharacterStatus = {
   inPosition: boolean;
 };
 export type WordStatus = CharacterStatus[];
+export type AnswerInfo = {
+  answerId: number;
+  wordBankId: number;
+};

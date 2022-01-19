@@ -5,20 +5,25 @@ import React, {
   useState,
   useReducer,
 } from "react";
-import { useAppSelector } from "../store";
+import { fetchDefinition, useAppDispatch, useAppSelector } from "../store";
 import { WordStatus } from "../utilities/types";
-import { getDefinition, WordResult } from "../utilities/word-service";
+import { WordResult } from "../utilities/word-service";
 
 const canShare = typeof navigator.share === "function";
 
 function useDefinition(word: string) {
+  const dispatch = useAppDispatch();
   const playOffline = useAppSelector((state) => state.settings.playOffline);
-  const [definition, setDefinition] = useState<WordResult[]>();
+  const definition = useAppSelector((state) =>
+    state.definition[word]?.state === "done"
+      ? state.definition[word]?.value
+      : undefined
+  );
   useEffect(() => {
     if (!playOffline) {
-      getDefinition(word).then(setDefinition);
+      dispatch(fetchDefinition(word));
     }
-  }, [playOffline, word]);
+  }, [playOffline, word, dispatch]);
   return definition;
 }
 
