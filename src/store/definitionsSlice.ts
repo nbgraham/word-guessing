@@ -15,23 +15,27 @@ const definitionsSlice = createSlice({
   initialState: {} as Partial<Record<string, Loader<WordResult[]>>>,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchDefinition.pending, (state, action) => {
-      const word = action.meta.arg;
-      const wordState = (state[word] ??= { state: "initial" });
-      wordState.state = "loading";
-    });
-    builder.addCase(fetchDefinition.fulfilled, (state, action) => {
-      const word = action.meta.arg;
-      const results = action.payload;
-      const wordState = (state[word] ??= { state: "initial" });
-      wordState.state = "done";
-      wordState.value = results;
-    });
-    builder.addCase(fetchDefinition.rejected, (state, action) => {
-      const word = action.meta.arg;
-      const wordState = (state[word] ??= { state: "initial" });
-      wordState.state = "error";
-    });
+    builder
+      .addCase(fetchDefinition.pending, (state, action) => {
+        const word = action.meta.arg;
+        state[word] = {
+          state: "loading",
+        };
+      })
+      .addCase(fetchDefinition.fulfilled, (state, action) => {
+        const word = action.meta.arg;
+        const results = action.payload;
+        state[word] = {
+          state: "done",
+          value: results,
+        };
+      })
+      .addCase(fetchDefinition.rejected, (state, action) => {
+        const word = action.meta.arg;
+        state[word] = {
+          state: "error",
+        };
+      });
   },
 });
 export default definitionsSlice;
