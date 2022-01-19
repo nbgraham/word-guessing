@@ -6,7 +6,7 @@ import { pickNewAnswer } from "../store/gameSlice";
 import { WordBank } from "../utilities/word-service";
 import Spinner from "./Spinner";
 
-const Instructions: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
+const Home: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
   return (
     <div>
       Guess the 5-letter word! <br />
@@ -47,4 +47,4 @@ const NewGame: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
   return <div>Error Loading Game</div>;
 };
 
-export default Instructions;
+export default Home;

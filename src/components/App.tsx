@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { Routes, Route, Link, useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { useAppDispatch, useAppSelector } from "../store";
-import Instructions from "./Instructions";
+import Home from "./Home";
 import Settings from "./Settings";
 import Spinner from "./Spinner";
 import { Play } from "./Play";
@@ -41,7 +41,7 @@ const App: React.FC = () => {
       <Routes>
         <Route
           path={routes.home}
-          element={<Instructions wordBank={wordBank} />}
+          element={<Home wordBank={wordBank} />}
         />
         <Route path={routes.settings} element={<Settings />} />
         <Route path={routes.play} element={<Play />} />
