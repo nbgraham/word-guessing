@@ -1,10 +1,11 @@
 import React, { FormEventHandler, useEffect, useRef, useState } from "react";
 import { isAWord } from "../utilities/word-service";
-import { actions, useAppDispatch, useAppSelector } from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
 import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
 import Spinner from "./Spinner";
 import Victory from "./Victory";
 import { CharacterStatus, WordStatus } from "../utilities/types";
+import gameSlice from "../store/gameSlice";
 
 const SIZE = 5;
 const PATTERN = "^[a-zA-Z]*$";
@@ -21,7 +22,7 @@ const Game: React.FC<{
   const dispatch = useAppDispatch();
   const handleSubmitGuess = (guess: string) => {
     dispatch(
-      actions.submitGuess({
+      gameSlice.actions.submitGuess({
         guess,
         answer,
       })

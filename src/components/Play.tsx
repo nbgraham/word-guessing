@@ -4,12 +4,8 @@ import Spinner from "./Spinner";
 import Game from "./Game";
 import { routes, useAnswerInfoParams } from "../routes";
 import type { WordBank } from "../utilities/word-service";
-import {
-  actions,
-  pickNewAnswer,
-  useAppDispatch,
-  useAppSelector,
-} from "../store";
+import { useAppDispatch, useAppSelector } from "../store";
+import gameSlice, { pickNewAnswer } from "../store/gameSlice";
 
 export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
   const newAnswer = useAppSelector((state) => state.game.newAnswer);
@@ -33,10 +29,10 @@ export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
 
 export const Play: React.FC = () => {
   const answerInfo = useAnswerInfoParams();
-  const answer = useAppSelector(state => state.game.answer);
+  const answer = useAppSelector((state) => state.game.answer);
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(actions.startGame(answerInfo));
+    dispatch(gameSlice.actions.startGame(answerInfo));
   }, [dispatch, answerInfo]);
 
   return (

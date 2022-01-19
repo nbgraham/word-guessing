@@ -5,7 +5,8 @@ import React, {
   useState,
   useReducer,
 } from "react";
-import { fetchDefinition, useAppDispatch, useAppSelector } from "../store";
+import { fetchDefinition } from "../store/definitionsSlice";
+import { useAppDispatch, useAppSelector } from "../store";
 import { WordStatus } from "../utilities/types";
 import { WordResult } from "../utilities/word-service";
 
