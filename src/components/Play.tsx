@@ -4,8 +4,9 @@ import { useAnswerInfoParams } from "../routes";
 import { useAppDispatch, useAppSelector } from "../store";
 import gameSlice from "../store/gameSlice";
 
-export const Play: React.FC = () => {
+const Play: React.FC = () => {
   const answerInfo = useAnswerInfoParams();
+
   const answer = useAppSelector((state) => state.game.answer);
   const dispatch = useAppDispatch();
   useEffect(() => {
@@ -25,3 +26,4 @@ export const Play: React.FC = () => {
     </div>
   );
 };
+export default Play;

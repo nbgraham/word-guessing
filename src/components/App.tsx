@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { Routes, Route, Link, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { routes } from "../routes";
 import { useAppDispatch, useAppSelector } from "../store";
+import { fetchWordBank } from "../store/gameSlice";
 import Home from "./Home";
+import Play from "./Play";
 import Settings from "./Settings";
 import Spinner from "./Spinner";
-import { Play } from "./Play";
-import { fetchWordBank } from "../store/gameSlice";
 
 function useWordBank() {
   const wordBank = useAppSelector((state) => state.game.wordBank);
