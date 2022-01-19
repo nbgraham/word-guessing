@@ -8,7 +8,7 @@ const params = {
 };
 
 export const routes = {
-  instructions: "/instructions",
+  home: "/",
   settings: "/settings",
   playNew: "/play/new",
   play: `/play/:${params.wordBankId}/:${params.answerId}`,

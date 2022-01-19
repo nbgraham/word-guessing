@@ -1,9 +1,7 @@
-import { useNavigate } from "react-router-dom";
 import settingsSlice from "../store/settingsSlice";
 import { useAppDispatch, useAppSelector } from "../store";
 
 const Settings: React.FC = () => {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const settings = useAppSelector((state) => state.settings);
@@ -27,7 +25,6 @@ const Settings: React.FC = () => {
           dispatch(settingsSlice.actions.setGuessesMustBeValidWords(!checked))
         }
       />
-      <button onClick={() => navigate(-1)}>Back to game</button>
     </div>
   );
 };
