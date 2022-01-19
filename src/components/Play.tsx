@@ -18,13 +18,17 @@ export const PlayNew: React.FC<{ wordBank: WordBank }> = ({ wordBank }) => {
     dispatch(pickNewAnswer({ wordBank, mustBeValidWord }));
   }, [dispatch, wordBank, mustBeValidWord]);
 
-  return newAnswerInfo === undefined ? (
-    <div>
-      Loading Game <Spinner size={15} />
-    </div>
-  ) : (
-    <Navigate replace to={routes.playInstance(newAnswerInfo)} />
-  );
+  if (newAnswerInfo.state === "loading") {
+    return (
+      <div>
+        Loading Game <Spinner size={15} />
+      </div>
+    );
+  }
+  if (newAnswerInfo.state === "done" && newAnswerInfo.value) {
+    return <Navigate replace to={routes.playInstance(newAnswerInfo.value)} />;
+  }
+  return <div>Error Loading Game</div>;
 };
 
 export const Play: React.FC = () => {

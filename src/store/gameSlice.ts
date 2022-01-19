@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { unique } from "../utilities/array";
 import { evaluateGuess } from "../utilities/guess";
-import { WordStatus, AnswerInfo } from "../utilities/types";
+import { WordStatus, AnswerInfo, Loader } from "../utilities/types";
 import { WordBank, isAWord, getWordBank } from "../utilities/word-service";
 
 type GameState = {
@@ -15,12 +15,15 @@ type GameState = {
     }
   >;
   wordBank?: WordBank;
-  newAnswerInfo?: AnswerInfo;
+  newAnswerInfo: Loader<AnswerInfo>;
   answer?: string;
 };
 
 const initialState: GameState = {
   answers: {},
+  newAnswerInfo: {
+    state: "initial",
+  },
 };
 
 const gameSlice = createSlice({
@@ -63,16 +66,26 @@ const gameSlice = createSlice({
         answerInfo && wordBank && wordBank.version === answerInfo.wordBankId
           ? wordBank.words[answerInfo.answerId].toUpperCase()
           : undefined;
-      state.newAnswerInfo = undefined;
+      state.newAnswerInfo = { state: "initial" };
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(pickNewAnswer.fulfilled, (state, action) => {
-      state.newAnswerInfo = action.payload;
-    });
+    builder
+      .addCase(pickNewAnswer.fulfilled, (state, action) => {
+        state.newAnswerInfo = {
+          state: "done",
+          value: action.payload,
+        };
+      })
+      .addCase(pickNewAnswer.rejected, (state, action) => {
+        state.newAnswerInfo = {
+          state: "error",
+        };
+      });
+
     builder.addCase(fetchWordBank.fulfilled, (state, action) => {
-        state.wordBank = action.payload;
-    })
+      state.wordBank = action.payload;
+    });
   },
 });
 export default gameSlice;
@@ -106,4 +119,6 @@ export const pickNewAnswer = createAsyncThunk(
   }
 );
 
-export const fetchWordBank = createAsyncThunk("game/fetchWordBank", () => getWordBank());
+export const fetchWordBank = createAsyncThunk("game/fetchWordBank", () =>
+  getWordBank()
+);
