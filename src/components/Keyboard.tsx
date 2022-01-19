@@ -20,7 +20,8 @@ const Keyboard: React.FC<{
         width: "100vw",
         maxWidth: 400,
         display: "flex",
-        gap: 4,
+        gap: 2,
+        paddingTop: 20,
         flexDirection: "column",
       }}
     >
@@ -66,7 +67,7 @@ const Letter: React.FC<{
     return {
       display: "flex",
       flex: 1,
-      padding: "10px 2px",
+      padding: "15px 0px",
       borderRadius: 4,
       justifyContent: "center",
       backgroundColor: "#808080",
@@ -76,9 +77,9 @@ const Letter: React.FC<{
     };
   }, [disabled, highlighted]);
   return (
-    <div style={style} onClick={onClick}>
+    <button style={style} onClick={onClick}>
       {letter}
-    </div>
+    </button>
   );
 };
 
