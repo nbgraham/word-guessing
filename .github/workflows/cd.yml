@@ -25,8 +25,9 @@ on:
     branches: [ master ]
 
 jobs:
-  build-and-deploy:
+  deployment:
     concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
