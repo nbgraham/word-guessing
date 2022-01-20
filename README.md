@@ -1,3 +1,5 @@
+[![Node.js CI](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml/badge.svg)](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml)
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
