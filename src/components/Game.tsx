@@ -88,8 +88,10 @@ const Guess: React.FC<{
     inputRef.current?.focus();
   }, [inputRef]);
 
-  const handleSubmit: FormEventHandler = async () => {
-    if (submitting) return false;
+  const handleSubmit: FormEventHandler = async (event) => {
+    event.preventDefault();
+
+    if (submitting) return;
     setSubmitting(true);
 
     if (!formRef.current?.checkValidity()) {
@@ -106,7 +108,6 @@ const Guess: React.FC<{
     }
 
     setSubmitting(false);
-    return false;
   };
   const asyncValidation = async (value: string) => {
     if (guessesMustBeValidWords && !(await isAWord(value)))
