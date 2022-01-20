@@ -9,12 +9,12 @@ on:
 jobs:
   build:
     concurrency: ci-${{ github.ref }} # Recommended if you intend to make multiple deployments in quick succession.
+    runs-on: ${{ matrix.os }}
 
     strategy:
       matrix:
         node-version: [16.x]
-        runs-on: [ubuntu-latest, windows-latest]
-
+        os: [ubuntu-latest, windows-latest]
 
     steps:
       - uses: actions/checkout@v2
