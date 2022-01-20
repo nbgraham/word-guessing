@@ -1,4 +1,4 @@
-name: Build and Deploy
+name: Build, Test, and Deploy
 
 on:
   push:
@@ -13,10 +13,18 @@ jobs:
       - name: Checkout 🛎️
         uses: actions/checkout@v2
 
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
       - name: Install and Build 🔧 
         run: |
           npm ci
           npm run build
+
+      - name: Test 
+        run: npm test
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
