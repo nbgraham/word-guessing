@@ -1,14 +1,14 @@
-import React, { FormEventHandler, useEffect, useRef, useState } from 'react';
-import { isAWord } from '../utilities/word-service';
-import { useAppDispatch, useAppSelector } from '../store';
-import Keyboard, { BACKSPACE, SUBMIT } from './Keyboard';
-import Spinner from './Spinner';
-import Victory from './Victory';
-import { CharacterStatus, WordStatus } from '../utilities/types';
-import gameSlice from '../store/gameSlice';
+import React, { FormEventHandler, useEffect, useRef, useState } from "react";
+import { isAWord } from "../utilities/word-service";
+import { useAppDispatch, useAppSelector } from "../store";
+import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
+import Spinner from "./Spinner";
+import Victory from "./Victory";
+import { CharacterStatus, WordStatus } from "../utilities/types";
+import gameSlice from "../store/gameSlice";
 
 const SIZE = 5;
-const PATTERN = '^[a-zA-Z]*$';
+const PATTERN = "^[a-zA-Z]*$";
 
 const Game: React.FC<{
   answer: string;
@@ -32,9 +32,9 @@ const Game: React.FC<{
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         gap: 10,
         paddingTop: 20,
       }}
@@ -68,7 +68,7 @@ const Guess: React.FC<{
   eliminatedLetters: string[];
   foundLetters: string[];
 }> = ({ onSubmitGuess, eliminatedLetters, foundLetters }) => {
-  const [guess, _setGuess] = useState('');
+  const [guess, _setGuess] = useState("");
   const setGuess = (g: string) => _setGuess(g.substring(0, SIZE));
   const [submitting, setSubmitting] = useState(false);
   const guessesMustBeValidWords = useAppSelector(
@@ -86,10 +86,10 @@ const Guess: React.FC<{
     setSubmitting(true);
 
     if (!formRef.current?.checkValidity()) {
-      alert('Invalid form');
+      alert("Invalid form");
     } else {
       const errorMessage = await asyncValidation(guess);
-      inputRef.current?.setCustomValidity(errorMessage || '');
+      inputRef.current?.setCustomValidity(errorMessage || "");
       if (!errorMessage) {
         onSubmitGuess(guess);
       } else {
@@ -114,8 +114,8 @@ const Guess: React.FC<{
       return `Too short, must be more than ${SIZE} characters`;
     if (value.length > SIZE)
       return `Too long, must be less than ${SIZE} characters`;
-    if (!new RegExp(PATTERN).test(value)) return 'Only letters are allowed';
-    return '';
+    if (!new RegExp(PATTERN).test(value)) return "Only letters are allowed";
+    return "";
   };
 
   const handleTypeLetter = (letter: string) => {
@@ -166,7 +166,7 @@ const WordResult: React.FC<{
   guessStatus: WordStatus;
 }> = ({ guessStatus }) => {
   return (
-    <div style={{ display: 'flex', maxWidth: 300 }}>
+    <div style={{ display: "flex", maxWidth: 300 }}>
       {guessStatus.map((status, index) => (
         <WordLetter key={index} status={status} index={index} />
       ))}
@@ -179,17 +179,17 @@ const WordLetter: React.FC<{ status: CharacterStatus; index: number }> = ({
   index,
 }) => {
   const getColor = (status: CharacterStatus) => {
-    return status.inWord ? (status.inPosition ? 'green' : 'yellow') : '#dddddd';
+    return status.inWord ? (status.inPosition ? "green" : "yellow") : "#dddddd";
   };
   const style = React.useMemo<React.CSSProperties>(() => {
     return {
-      display: 'flex',
+      display: "flex",
       flex: 1,
-      padding: '15px 15px',
+      padding: "15px 15px",
       margin: 3,
-      border: '1px solid black',
+      border: "1px solid black",
       borderRadius: 4,
-      justifyContent: 'center',
+      justifyContent: "center",
       backgroundColor: getColor(status),
     };
   }, [status]);
