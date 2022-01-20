@@ -168,18 +168,6 @@ const WordResult: React.FC<{
   return (
     <div style={{ display: 'flex', maxWidth: 300 }}>
       {guessStatus.map((status, index) => (
-        // <div
-        //   key={index}
-        //   style={{
-        //     backgroundColor: getColor(status),
-        //     flex: 1,
-        //     minWidth: 12,
-        //     display: 'flex',
-        //     justifyContent: 'center',
-        //   }}
-        // >
-        //   {status.character}
-        // </div>
         <WordLetter key={index} status={status} index={index} />
       ))}
     </div>
