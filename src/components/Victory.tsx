@@ -9,24 +9,9 @@ import { fetchDefinition } from "../store/definitionsSlice";
 import { useAppDispatch, useAppSelector } from "../store";
 import { WordStatus } from "../utilities/types";
 import { WordResult } from "../utilities/word-service";
+import NewGame from "./NewGame";
 
 const canShare = typeof navigator.share === "function";
-
-function useDefinition(word: string) {
-  const dispatch = useAppDispatch();
-  const playOffline = useAppSelector((state) => state.settings.playOffline);
-  const definition = useAppSelector((state) =>
-    state.definition[word]?.state === "done"
-      ? state.definition[word]?.value
-      : undefined
-  );
-  useEffect(() => {
-    if (!playOffline) {
-      dispatch(fetchDefinition(word));
-    }
-  }, [playOffline, word, dispatch]);
-  return definition;
-}
 
 const Victory: React.FC<{
   guesses: WordStatus[];
@@ -75,6 +60,7 @@ const Victory: React.FC<{
       <p>You won!</p>
       <pre>{guessSummary}</pre>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <NewGame />
         {canShare && <button onClick={share}>Share</button>}
         <button onClick={copyShareText}>Copy Share Text</button>
         {copied && <div>Copied!</div>}
@@ -112,5 +98,21 @@ const Definition: React.FC<{ definition: WordResult[] }> = ({ definition }) => {
     </div>
   );
 };
+
+function useDefinition(word: string) {
+  const dispatch = useAppDispatch();
+  const playOffline = useAppSelector((state) => state.settings.playOffline);
+  const definition = useAppSelector((state) =>
+    state.definition[word]?.state === "done"
+      ? state.definition[word]?.value
+      : undefined
+  );
+  useEffect(() => {
+    if (!playOffline) {
+      dispatch(fetchDefinition(word));
+    }
+  }, [playOffline, word, dispatch]);
+  return definition;
+}
 
 export default Victory;
