@@ -1,11 +1,11 @@
-import settingsSlice from "../store/settingsSlice";
-import { useAppDispatch, useAppSelector } from "../store";
+import settingsSlice from '../store/settingsSlice'
+import { useAppDispatch, useAppSelector } from '../store'
 
 const Settings: React.FC = () => {
-  const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch()
 
-  const settings = useAppSelector((state) => state.settings);
-  const { guessesMustBeValidWords, playOffline } = settings;
+  const settings = useAppSelector((state) => state.settings)
+  const { guessesMustBeValidWords, playOffline } = settings
 
   return (
     <div>
@@ -26,20 +26,20 @@ const Settings: React.FC = () => {
         }
       />
     </div>
-  );
-};
+  )
+}
 
 const Checkbox: React.FC<{
-  disabled?: boolean;
-  label: string;
-  checked: boolean;
-  onChange: (checked: boolean) => void;
+  disabled?: boolean
+  label: string
+  checked: boolean
+  onChange: (checked: boolean) => void
 }> = ({ label, checked, onChange, disabled }) => {
-  const toggle = () => onChange(!checked);
+  const toggle = () => onChange(!checked)
   return (
     <div
       style={
-        disabled ? { opacity: 0.5, textDecoration: "line-through" } : undefined
+        disabled ? { opacity: 0.5, textDecoration: 'line-through' } : undefined
       }
     >
       <label onClick={toggle}>{label}</label>
@@ -50,7 +50,7 @@ const Checkbox: React.FC<{
         onChange={(event) => onChange(event.target.checked)}
       />
     </div>
-  );
-};
+  )
+}
 
-export default Settings;
+export default Settings
