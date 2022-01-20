@@ -1,4 +1,11 @@
-import React, { FormEventHandler, useEffect, useRef, useState } from "react";
+import React, {
+  CSSProperties,
+  FormEventHandler,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { isAWord } from "../utilities/word-service";
 import { useAppDispatch, useAppSelector } from "../store";
 import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
@@ -165,30 +172,35 @@ const Guess: React.FC<{
 const WordResult: React.FC<{
   guessStatus: WordStatus;
 }> = ({ guessStatus }) => {
-  const getColor = (status: CharacterStatus) => {
-    if (status.inWord) {
-      return status.inPosition ? "green" : "yellow";
-    }
-  };
-
   return (
-    <div style={{ display: "flex", maxWidth: 100 }}>
+    <div style={{ display: "flex", maxWidth: 300 }}>
       {guessStatus.map((status, index) => (
-        <div
-          key={index}
-          style={{
-            backgroundColor: getColor(status),
-            flex: 1,
-            minWidth: 12,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          {status.character}
-        </div>
+        <WordLetter key={index} status={status} />
       ))}
     </div>
   );
+};
+
+const WordLetter: React.FC<{ status: CharacterStatus }> = ({ status }) => {
+  const color = useMemo(
+    () =>
+      status.inWord ? (status.inPosition ? "green" : "yellow") : "#dddddd",
+    [status]
+  );
+  const style = useMemo<CSSProperties>(() => {
+    return {
+      display: "flex",
+      flex: 1,
+      padding: "15px 15px",
+      margin: 3,
+      border: "1px solid black",
+      borderRadius: 4,
+      justifyContent: "center",
+      backgroundColor: color,
+    };
+  }, [color]);
+
+  return <div style={style}>{status.character}</div>;
 };
 
 export default Game;
