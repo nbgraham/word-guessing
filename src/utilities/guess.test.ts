@@ -1,36 +1,36 @@
-import { evaluateGuess } from './guess'
+import { evaluateGuess } from "./guess";
 
-it('reports guess status correctly', () => {
-  const result = evaluateGuess('hello', 'peach')
+it("reports guess status correctly", () => {
+  const result = evaluateGuess("hello", "peach");
   expect(result).toEqual({
     status: [
       {
-        character: 'H',
+        character: "H",
         inWord: true,
         inPosition: false,
       },
       {
-        character: 'E',
+        character: "E",
         inWord: true,
         inPosition: true,
       },
       {
-        character: 'L',
+        character: "L",
         inWord: false,
         inPosition: false,
       },
       {
-        character: 'L',
+        character: "L",
         inWord: false,
         inPosition: false,
       },
       {
-        character: 'O',
+        character: "O",
         inWord: false,
         inPosition: false,
       },
     ],
-    eliminatedLetters: ['L', 'O'],
-    foundLetters: ['H', 'E'],
-  })
-})
+    eliminatedLetters: ["L", "O"],
+    foundLetters: ["H", "E"],
+  });
+});

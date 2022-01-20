@@ -1,29 +1,29 @@
-import React, { useEffect } from 'react'
-import Game from './Game'
-import { useAnswerInfoParams } from '../routes'
-import { useAppDispatch, useAppSelector } from '../store'
-import gameSlice from '../store/gameSlice'
+import React, { useEffect } from "react";
+import Game from "./Game";
+import { useAnswerInfoParams } from "../routes";
+import { useAppDispatch, useAppSelector } from "../store";
+import gameSlice from "../store/gameSlice";
 
 const Play: React.FC = () => {
-  const answerInfo = useAnswerInfoParams()
+  const answerInfo = useAnswerInfoParams();
 
-  const answer = useAppSelector((state) => state.game.answer)
-  const dispatch = useAppDispatch()
+  const answer = useAppSelector((state) => state.game.answer);
+  const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(gameSlice.actions.startGame(answerInfo))
-  }, [dispatch, answerInfo])
+    dispatch(gameSlice.actions.startGame(answerInfo));
+  }, [dispatch, answerInfo]);
 
   return (
     <div
       style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
         gap: 30,
       }}
     >
       {answer && <Game key={answer} answer={answer} />}
     </div>
-  )
-}
-export default Play
+  );
+};
+export default Play;

@@ -1,25 +1,25 @@
-import React, { useEffect } from 'react'
-import { Link, Route, Routes, useNavigate } from 'react-router-dom'
-import { routes } from '../routes'
-import { useAppDispatch, useAppSelector } from '../store'
-import { fetchWordBank } from '../store/gameSlice'
-import Home from './Home'
-import Play from './Play'
-import Settings from './Settings'
-import Spinner from './Spinner'
+import React, { useEffect } from "react";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
+import { routes } from "../routes";
+import { useAppDispatch, useAppSelector } from "../store";
+import { fetchWordBank } from "../store/gameSlice";
+import Home from "./Home";
+import Play from "./Play";
+import Settings from "./Settings";
+import Spinner from "./Spinner";
 
 function useWordBank() {
-  const wordBank = useAppSelector((state) => state.game.wordBank)
-  const dispatch = useAppDispatch()
+  const wordBank = useAppSelector((state) => state.game.wordBank);
+  const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(fetchWordBank())
-  }, [dispatch])
-  return wordBank
+    dispatch(fetchWordBank());
+  }, [dispatch]);
+  return wordBank;
 }
 
 const App: React.FC = () => {
-  const navigate = useNavigate()
-  const wordBank = useWordBank()
+  const navigate = useNavigate();
+  const wordBank = useWordBank();
 
   if (!wordBank) {
     return (
@@ -27,7 +27,7 @@ const App: React.FC = () => {
         Loading word bank
         <Spinner size={50} />
       </div>
-    )
+    );
   }
 
   return (
@@ -44,7 +44,7 @@ const App: React.FC = () => {
         <Route path={routes.play} element={<Play />} />
       </Routes>
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
