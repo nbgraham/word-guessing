@@ -45,7 +45,9 @@ const Game: React.FC<{
     return datamuseApi
       .getWordsInfo({
         spelledLike: spelledLike,
-        max: 20,
+        metadata: {
+          frequency: true
+        }
       })
       .then((wordsInfo) => {
         const pastGuesses = guesses.map((guess) =>
