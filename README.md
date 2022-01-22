@@ -5,6 +5,14 @@
 - [ ] Check WordsApi sample data for definition before calling dictionary api. Dictionary api is slow
 - [ ] Look into getting a WordsApi key and actually calling it. How to secure key? Maybe make each user get their own key? But then they have to enter payment info...
 
+## Dependencies
+
+[Datamuse API](https://www.datamuse.com/api/)
+
+- Validate that words are real words
+- Get definitions
+- "Randomly" pick answer
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
