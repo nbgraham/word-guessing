@@ -1,3 +1,5 @@
+import { WordValidator } from "../utilities/types";
+
 type Data = Word[];
 type Word = {
   word: string;
@@ -6,7 +8,26 @@ type Word = {
   defs?: string[];
 };
 
-class DatamuseApi {
+class DatamuseApi implements WordValidator {
+  async isAWord(word: string) {
+    const definitions = await this.getDefinitions(word);
+    return (definitions?.length ?? 0) > 0;
+  }
+
+  async getDefinitions(word: string) {
+    const wordsInfo = await this.getWordsInfo({
+      max: 5,
+      spelledLike: word,
+      metadata: {
+        definitions: true,
+      },
+    });
+    const matchingWordInfo = wordsInfo.find(
+      (wordInfo) => wordInfo.word.toLowerCase() === word.toLowerCase()
+    );
+    return matchingWordInfo?.defs;
+  }
+
   async getWordsInfo(options: {
     spelledLike?: string;
     max?: number;

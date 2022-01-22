@@ -17,3 +17,7 @@ export type Loader<T> = {
   value?: T;
   errorMessage?: string;
 };
+
+export interface WordValidator {
+  isAWord(word: string): Promise<boolean>
+}

@@ -1,18 +1,18 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Loader } from "../utilities/types";
-import { dictionaryApi, WordResult } from "../services/word-service";
+import { datamuseApi } from "../services/datamuse-api";
 
 export const fetchDefinition = createAsyncThunk(
   "definition/fetchDefinition",
   async (word: string) => {
-    const results = await dictionaryApi.getDefinition(word);
-    return results;
+    const definitions = await datamuseApi.getDefinitions(word);
+    return definitions;
   }
 );
 
 const definitionsSlice = createSlice({
   name: "definitions",
-  initialState: {} as Partial<Record<string, Loader<WordResult[]>>>,
+  initialState: {} as Partial<Record<string, Loader<string[]>>>,
   reducers: {},
   extraReducers: (builder) => {
     builder

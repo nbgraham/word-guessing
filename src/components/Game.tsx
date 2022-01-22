@@ -6,13 +6,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { dictionaryApi } from "../services/word-service";
 import { useAppDispatch, useAppSelector } from "../store";
 import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
 import Spinner from "./Spinner";
 import Victory from "./Victory";
 import { CharacterStatus, WordStatus } from "../utilities/types";
 import gameSlice from "../store/gameSlice";
+import { datamuseApi } from "../services/datamuse-api";
 
 const SIZE = 5;
 const PATTERN = "^[a-zA-Z]*$";
@@ -110,7 +110,7 @@ const Guess: React.FC<{
     setSubmitting(false);
   };
   const asyncValidation = async (value: string) => {
-    if (guessesMustBeValidWords && !(await dictionaryApi.isAWord(value)))
+    if (guessesMustBeValidWords && !(await datamuseApi.isAWord(value)))
       return `"${value}" is not an English word`;
   };
 

@@ -1,9 +1,8 @@
 import { random } from "../utilities/array";
 import { Encryption } from "../utilities/encryption";
-import { VersionKey } from "../utilities/types";
+import { VersionKey, WordValidator } from "../utilities/types";
 import { datamuseApi } from "./datamuse-api";
 import { WordBankService } from "./word-bank-service";
-import { WordService } from "./word-service";
 import { wordsApi } from "./words-api";
 
 abstract class AnswerService {
@@ -19,18 +18,19 @@ abstract class AnswerService {
 }
 export type { AnswerService };
 
+
 export class StaticAnswerService extends AnswerService {
-  private wordService: WordService;
+  private wordValidator: WordValidator;
   private wordBankService: WordBankService;
 
   constructor(
     version: VersionKey,
-    wordService: WordService,
+    wordValidator: WordValidator,
     wordBankService: WordBankService
   ) {
     super(version);
     this.wordBankService = wordBankService;
-    this.wordService = wordService;
+    this.wordValidator = wordValidator;
   }
 
   async getNewAnswerKey(mustBeValidWord: boolean): Promise<string | undefined> {
@@ -44,7 +44,7 @@ export class StaticAnswerService extends AnswerService {
       const index = Math.floor(words.length * Math.random());
       const word = words[index];
 
-      const valid = !mustBeValidWord || (await this.wordService.isAWord(word));
+      const valid = !mustBeValidWord || (await this.wordValidator.isAWord(word));
       if (valid) {
         return index.toString();
       } else {
