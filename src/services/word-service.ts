@@ -26,7 +26,7 @@ export interface WordService {
   getDefinition(word: string): Promise<WordResult[] | undefined>;
 }
 
-export class DictionaryApi implements WordService {
+class DictionaryApi implements WordService {
   cache = new PromiseCache<WordResult[] | undefined>();
   
   async isAWord(word: string) {
@@ -54,3 +54,5 @@ export class DictionaryApi implements WordService {
     });
   }
 }
+
+export const dictionaryApi = new DictionaryApi();

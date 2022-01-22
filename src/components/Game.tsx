@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { DictionaryApi } from "../services/word-service";
+import { dictionaryApi } from "../services/word-service";
 import { useAppDispatch, useAppSelector } from "../store";
 import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
 import Spinner from "./Spinner";
@@ -16,9 +16,6 @@ import gameSlice from "../store/gameSlice";
 
 const SIZE = 5;
 const PATTERN = "^[a-zA-Z]*$";
-
-// TODO: singleton?
-const dictionaryApi = new DictionaryApi();
 
 const Game: React.FC<{
   answer: string;
