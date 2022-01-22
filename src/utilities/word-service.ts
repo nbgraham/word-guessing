@@ -1,3 +1,4 @@
+import { PromiseCache } from "./cache";
 
 
 type Definition = {
@@ -21,30 +22,21 @@ type NotFoundResponse = {
 };
 type Response = WordResult[] | NotFoundResponse;
 
-const cache: Partial<Record<string, WordResult[]>> = {};
-async function cached(
-  key: string,
-  factory: () => Promise<WordResult[] | undefined>
-) {
-  if (cache[key]) return cache[key];
-  cache[key] = await factory();
-  return cache[key];
-}
-
 export interface WordService {
   isAWord(word: string): Promise<boolean>;
   getDefinition(word: string): Promise<WordResult[] | undefined>;
 }
 
 export class DictionaryApi implements WordService {
-
+  cache = new PromiseCache<WordResult[] | undefined>();
+  
   async isAWord(word: string) {
     const wordResults = await this.getDefinition(word);
     return !!wordResults;
   }
   
   async getDefinition(word: string) {
-    return cached(word.toUpperCase(), async () => {
+    return this.cache.get(word.toUpperCase(), async () => {
       if (!word) return undefined;
   
       const result = await fetch(
