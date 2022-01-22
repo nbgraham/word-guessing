@@ -15,4 +15,5 @@ type LoaderState = "initial" | "loading" | "done" | "error";
 export type Loader<T> = {
   state: LoaderState;
   value?: T;
+  errorMessage?: string;
 };

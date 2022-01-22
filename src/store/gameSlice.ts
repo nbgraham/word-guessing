@@ -78,6 +78,7 @@ const gameSlice = createSlice({
       .addCase(pickNewAnswer.rejected, (state, action) => {
         state.newAnswerInfo = {
           state: "error",
+          errorMessage: action.error?.message,
         };
       });
     builder
@@ -95,6 +96,7 @@ const gameSlice = createSlice({
       .addCase(startNewGame.rejected, (state, action) => {
         state.answer = {
           state: "error",
+          errorMessage: action.error?.message,
         };
       });
   },
@@ -106,13 +108,12 @@ export const pickNewAnswer = createAsyncThunk(
   async ({ mustBeValidWord }: { mustBeValidWord: boolean }) => {
     const answerService = getAnswerService();
     const answerKey = await answerService.getNewAnswerKey(mustBeValidWord);
-    if (answerKey) {
-      const answerInfo: AnswerInfo = {
-        answerServiceVersion: answerService.version,
-        answerKey: answerKey,
-      };
-      return answerInfo;
-    }
+    if (!answerKey) throw new Error("Could not get a new answer key");
+    const answerInfo: AnswerInfo = {
+      answerServiceVersion: answerService.version,
+      answerKey: answerKey,
+    };
+    return answerInfo;
   }
 );
 
@@ -121,6 +122,10 @@ export const startNewGame = createAsyncThunk(
   async (answerInfo: AnswerInfo) => {
     const answerService = getAnswerService(answerInfo.answerServiceVersion);
     const answer = await answerService.getAnswer(answerInfo.answerKey);
+    if (!answer)
+      throw new Error(
+        `Could not get matching answer ${JSON.stringify(answerInfo)}`
+      );
     return answer;
   }
 );
