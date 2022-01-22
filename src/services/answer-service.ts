@@ -74,11 +74,12 @@ export class DatamuseApiAnswerService extends AnswerService {
     while (tries < 10) {
       tries++;
 
-      const limitStart = Math.random() < 0.5;
       const randomLetter = this.getRandomLetter();
-      const spelledLike = `${limitStart ? randomLetter : "?"}???${
-        !limitStart ? randomLetter : "?"
-      }`;
+      const randomIndex = Math.floor(Math.random() * 5);
+      const spelledLike = new Array(5)
+        .fill(null)
+        .map((_, i) => (i === randomIndex ? randomLetter : "?"))
+        .join("");
 
       const wordsInfo = await datamuseApi.getWordsInfo({
         spelledLike,
@@ -96,7 +97,7 @@ export class DatamuseApiAnswerService extends AnswerService {
         .filter((wordInfo) => /^[a-zA-Z]{5}$/.test(wordInfo.word));
 
       const chosenWordInfo = random(frequentWords);
-      const word = chosenWordInfo.word;
+      const word = chosenWordInfo?.word;
       if (word) {
         return this.encryption.encrypt(word);
       } else {
