@@ -1,10 +1,5 @@
 [![Node.js CI](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml/badge.svg)](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml)
 
-## TODO
-
-- [ ] Check WordsApi sample data for definition before calling dictionary api. Dictionary api is slow
-- [ ] Look into getting a WordsApi key and actually calling it. How to secure key? Maybe make each user get their own key? But then they have to enter payment info...
-
 ## Dependencies
 
 [Datamuse API](https://www.datamuse.com/api/)
