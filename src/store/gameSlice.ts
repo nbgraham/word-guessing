@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getAnswerService } from "../services/answer-service-factory";
 import { unique } from "../utilities/array";
 import { evaluateGuess } from "../utilities/guess";
-import { WordStatus, AnswerInfo, Loader } from "../utilities/types";
-import { WordBank, isAWord, getWordBank } from "../utilities/word-service";
+import { WordStatus, AnswerInfo, Loader, VersionKey } from "../utilities/types";
 
 type GameState = {
   answers: Record<
@@ -14,14 +14,16 @@ type GameState = {
       won?: boolean;
     }
   >;
-  wordBank?: WordBank;
   newAnswerInfo: Loader<AnswerInfo>;
-  answer?: string;
+  answer: Loader<string>;
 };
 
 const initialState: GameState = {
   answers: {},
   newAnswerInfo: {
+    state: "initial",
+  },
+  answer: {
     state: "initial",
   },
 };
@@ -59,18 +61,14 @@ const gameSlice = createSlice({
         ...foundLetters,
       ]);
     },
-    startGame(state, action: PayloadAction<AnswerInfo>) {
-      const { wordBank } = state;
-      const answerInfo = action.payload;
-      state.answer =
-        answerInfo && wordBank && wordBank.version === answerInfo.wordBankId
-          ? wordBank.words[answerInfo.answerId].toUpperCase()
-          : undefined;
-      state.newAnswerInfo = { state: "initial" };
-    },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(pickNewAnswer.pending, (state) => {
+        state.newAnswerInfo = {
+          state: "loading",
+        };
+      })
       .addCase(pickNewAnswer.fulfilled, (state, action) => {
         state.newAnswerInfo = {
           state: "done",
@@ -80,45 +78,54 @@ const gameSlice = createSlice({
       .addCase(pickNewAnswer.rejected, (state, action) => {
         state.newAnswerInfo = {
           state: "error",
+          errorMessage: action.error?.message,
         };
       });
-
-    builder.addCase(fetchWordBank.fulfilled, (state, action) => {
-      state.wordBank = action.payload;
-    });
+    builder
+      .addCase(startNewGame.pending, (state) => {
+        state.answer = {
+          state: "loading",
+        };
+      })
+      .addCase(startNewGame.fulfilled, (state, action) => {
+        state.answer = {
+          state: "done",
+          value: action.payload,
+        };
+      })
+      .addCase(startNewGame.rejected, (state, action) => {
+        state.answer = {
+          state: "error",
+          errorMessage: action.error?.message,
+        };
+      });
   },
 });
 export default gameSlice;
 
 export const pickNewAnswer = createAsyncThunk(
   "game/pickNewAnswer",
-  async ({
-    mustBeValidWord,
-    wordBank,
-  }: {
-    mustBeValidWord: boolean;
-    wordBank: WordBank;
-  }) => {
-    let tries = 0;
-    while (tries < 10) {
-      tries++;
-      const words = wordBank.words;
-      const index = Math.floor(words.length * Math.random());
-      const word = words[index];
-
-      if (!mustBeValidWord || (await isAWord(word))) {
-        return {
-          answerId: index,
-          wordBankId: wordBank?.version,
-        } as AnswerInfo;
-      } else {
-        console.warn(`"${word}" is not a word. Looking for another word.`);
-      }
-    }
-    throw new Error("Ran out of tries to pick a new answer");
+  async ({ mustBeValidWord, answerServiceVersion }: { mustBeValidWord: boolean, answerServiceVersion: VersionKey }) => {
+    const answerService = getAnswerService(answerServiceVersion);
+    const answerKey = await answerService.getNewAnswerKey(mustBeValidWord);
+    if (!answerKey) throw new Error("Could not get a new answer key");
+    const answerInfo: AnswerInfo = {
+      answerServiceVersion: answerService.version,
+      answerKey: answerKey,
+    };
+    return answerInfo;
   }
 );
 
-export const fetchWordBank = createAsyncThunk("game/fetchWordBank", () =>
-  getWordBank()
+export const startNewGame = createAsyncThunk(
+  "game/startGame",
+  async (answerInfo: AnswerInfo) => {
+    const answerService = getAnswerService(answerInfo.answerServiceVersion);
+    const answer = await answerService.getAnswer(answerInfo.answerKey);
+    if (!answer)
+      throw new Error(
+        `Could not get matching answer ${JSON.stringify(answerInfo)}`
+      );
+    return answer;
+  }
 );

@@ -1,5 +1,13 @@
 [![Node.js CI](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml/badge.svg)](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml)
 
+## Dependencies
+
+[Datamuse API](https://www.datamuse.com/api/)
+
+- Validate that words are real words
+- Get definitions
+- "Randomly" pick answer
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

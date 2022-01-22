@@ -8,7 +8,6 @@ import React, {
 import { fetchDefinition } from "../store/definitionsSlice";
 import { useAppDispatch, useAppSelector } from "../store";
 import { WordStatus } from "../utilities/types";
-import { WordResult } from "../utilities/word-service";
 import NewGame from "./NewGame";
 
 const canShare = typeof navigator.share === "function";
@@ -70,30 +69,21 @@ const Victory: React.FC<{
   );
 };
 
-const Definition: React.FC<{ definition: WordResult[] }> = ({ definition }) => {
+const Definition: React.FC<{ definition: string[] }> = ({ definition }) => {
   const [show, toggle] = useReducer<Reducer<boolean, void>>(
     (state) => !state,
     false
   );
 
-  const meanings = useMemo(() => definition[0].meanings, [definition]);
-
   return (
     <div>
       <button onClick={toggle}>{show ? "Hide" : "Show"} Definition</button>
       {show && (
-        <div>
-          {meanings.map((meaning) => (
-            <div>
-              <h4>{meaning.partOfSpeech}</h4>
-              <ul>
-                {meaning.definitions.map((definition) => (
-                  <li>{definition.definition}</li>
-                ))}
-              </ul>
-            </div>
+        <ul>
+          {definition.map((d) => (
+            <li key={d}>{d}</li>
           ))}
-        </div>
+        </ul>
       )}
     </div>
   );

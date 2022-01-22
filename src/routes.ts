@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import type { AnswerInfo } from "./utilities/types";
 
 const params = {
-  wordBankId: "wordBankId",
+  answerServiceVersion: "answerServiceVersion",
   answerId: "answerId",
 };
 
@@ -11,17 +11,17 @@ export const routes = {
   home: "/",
   settings: "/settings",
   playNew: "/play/new",
-  play: `/play/:${params.wordBankId}/:${params.answerId}`,
+  play: `/play/:${params.answerServiceVersion}/:${params.answerId}`,
   playInstance: (answerInfo: AnswerInfo) =>
-    `/play/${answerInfo.wordBankId}/${answerInfo.answerId}`,
+    `/play/${answerInfo.answerServiceVersion}/${answerInfo.answerKey}`,
 };
 
 export function useAnswerInfoParams(): AnswerInfo {
   const currentParams = useParams();
-  const answerObject = useMemo(
+  const answerObject = useMemo<AnswerInfo>(
     () => ({
-      wordBankId: Number(currentParams[params.wordBankId]),
-      answerId: Number(currentParams[params.answerId]),
+      answerServiceVersion: Number(currentParams[params.answerServiceVersion]),
+      answerKey: currentParams[params.answerId] || '',
     }),
     [currentParams]
   );

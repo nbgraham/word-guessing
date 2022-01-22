@@ -4,12 +4,26 @@ export type CharacterStatus = {
   inPosition: boolean;
 };
 export type WordStatus = CharacterStatus[];
+
+export type VersionKey = number;
 export type AnswerInfo = {
-  answerId: number;
-  wordBankId: number;
+  answerKey: string;
+  answerServiceVersion: VersionKey;
 };
+
 type LoaderState = "initial" | "loading" | "done" | "error";
 export type Loader<T> = {
   state: LoaderState;
   value?: T;
+  errorMessage?: string;
+};
+
+export interface WordValidator {
+  isAWord(word: string): Promise<boolean>
+}
+
+export type WordBank = {
+  source?: string;
+  version: number;
+  words: string[];
 };
