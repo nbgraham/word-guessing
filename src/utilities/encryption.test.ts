@@ -4,25 +4,29 @@ describe("encryption", () => {
   const encryption = new Encryption();
 
   function itSymetricallyEncrypts(
-    expectedDecrypted: string,
+    baseWord: string,
     expectedEncrypted: string
   ) {
     it("encrypts", () => {
-      const encrypted = encryption.encrypt(expectedEncrypted);
-      expect(encrypted).toBe(expectedDecrypted);
+      const encrypted = encryption.encrypt(baseWord);
+      expect(encrypted).toBe(expectedEncrypted);
     });
 
     it("decrypts", () => {
-      const decrypted = encryption.decrypt(expectedDecrypted);
-      expect(decrypted).toBe(expectedEncrypted);
+      const decrypted = encryption.decrypt(expectedEncrypted);
+      expect(decrypted).toBe(baseWord);
     });
   }
 
   describe("heats", () => {
-    itSymetricallyEncrypts("heats", "wgkuz");
+    itSymetricallyEncrypts("heats", "futcx");
   });
 
   describe("doubt", () => {
-    itSymetricallyEncrypts("doubt", "glfsx");
+    itSymetricallyEncrypts("doubt", "kevgp");
+  });
+
+  describe("stoop: obscures double letters", () => {
+    itSymetricallyEncrypts("stoop", "yajlr");
   });
 });
