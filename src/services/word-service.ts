@@ -1,5 +1,4 @@
-import { PromiseCache } from "./cache";
-
+import { PromiseCache } from "../utilities/cache";
 
 type Definition = {
   definition: string;

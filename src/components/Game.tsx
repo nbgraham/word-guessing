@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { DictionaryApi } from "../utilities/word-service";
+import { DictionaryApi } from "../services/word-service";
 import { useAppDispatch, useAppSelector } from "../store";
 import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
 import Spinner from "./Spinner";

@@ -1,4 +1,4 @@
-import { PromiseCache } from "./cache";
+import { PromiseCache } from "../utilities/cache";
 
 export type WordBank = {
   version: number;

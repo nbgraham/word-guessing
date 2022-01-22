@@ -1,4 +1,4 @@
-import { VersionKey } from "./types";
+import { VersionKey } from "../utilities/types";
 import { WordBankService } from "./word-bank-service";
 import { WordService } from "./word-service";
 

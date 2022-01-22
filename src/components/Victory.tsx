@@ -8,7 +8,7 @@ import React, {
 import { fetchDefinition } from "../store/definitionsSlice";
 import { useAppDispatch, useAppSelector } from "../store";
 import { WordStatus } from "../utilities/types";
-import { WordResult } from "../utilities/word-service";
+import { WordResult } from "../services/word-service";
 import NewGame from "./NewGame";
 
 const canShare = typeof navigator.share === "function";

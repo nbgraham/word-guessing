@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getAnswerService } from "../utilities/answer-manager";
+import { getAnswerService } from "../services/answer-manager";
 import { unique } from "../utilities/array";
 import { evaluateGuess } from "../utilities/guess";
 import { WordStatus, AnswerInfo, Loader } from "../utilities/types";

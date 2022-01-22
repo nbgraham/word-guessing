@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Loader } from "../utilities/types";
-import { DictionaryApi, WordResult } from "../utilities/word-service";
+import { DictionaryApi, WordResult } from "../services/word-service";
 
 const dictionaryApi = new DictionaryApi();
 

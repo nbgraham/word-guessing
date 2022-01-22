@@ -1,5 +1,5 @@
 import { AnswerService, StaticAnswerService } from "./answer-service";
-import { VersionKey } from "./types";
+import { VersionKey } from "../utilities/types";
 import { wordBankService } from "./word-bank-service";
 import { DictionaryApi } from "./word-service";
 
