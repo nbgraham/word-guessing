@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 const settingsSlice = createSlice({
   name: "settings",
   initialState: {
-    guessesMustBeValidWords: false,
+    guessesMustBeValidWords: navigator.onLine,
     playOffline: !navigator.onLine,
   },
   reducers: {
