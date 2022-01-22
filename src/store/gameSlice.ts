@@ -14,7 +14,7 @@ type GameState = {
       won?: boolean;
     }
   >;
-  wordBank?: WordBank;
+  wordBank: WordBank;
   newAnswerInfo: Loader<AnswerInfo>;
   answer?: string;
 };
@@ -24,6 +24,7 @@ const initialState: GameState = {
   newAnswerInfo: {
     state: "initial",
   },
+  wordBank: getWordBank()
 };
 
 const gameSlice = createSlice({
@@ -61,6 +62,10 @@ const gameSlice = createSlice({
     },
     startGame(state, action: PayloadAction<AnswerInfo>) {
       const { wordBank } = state;
+      if (!wordBank) {
+        console.error('Word bank must exist when trying to start a game');
+        return;
+      }
       const answerInfo = action.payload;
       state.answer =
         answerInfo && wordBank && wordBank.version === answerInfo.wordBankId
@@ -82,10 +87,6 @@ const gameSlice = createSlice({
           state: "error",
         };
       });
-
-    builder.addCase(fetchWordBank.fulfilled, (state, action) => {
-      state.wordBank = action.payload;
-    });
   },
 });
 export default gameSlice;
@@ -117,8 +118,4 @@ export const pickNewAnswer = createAsyncThunk(
     }
     throw new Error("Ran out of tries to pick a new answer");
   }
-);
-
-export const fetchWordBank = createAsyncThunk("game/fetchWordBank", () =>
-  getWordBank()
 );

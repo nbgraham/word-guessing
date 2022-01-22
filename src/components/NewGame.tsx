@@ -2,12 +2,12 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { routes } from "../routes";
 import { useAppSelector, useAppDispatch } from "../store";
-import { fetchWordBank, pickNewAnswer } from "../store/gameSlice";
+import { pickNewAnswer } from "../store/gameSlice";
 import type { WordBank } from "../utilities/word-service";
 import Spinner from "./Spinner";
 
 const NewGame: React.FC = () => {
-  const wordBank = useWordBank();
+  const wordBank = useAppSelector((state) => state.game.wordBank);
   const newAnswerInfo = useNewAnswerInfo(wordBank);
 
   if (newAnswerInfo.state === "loading") {
@@ -35,15 +35,6 @@ function useNewAnswerInfo(wordBank: WordBank | undefined) {
     wordBank && dispatch(pickNewAnswer({ wordBank, mustBeValidWord }));
   }, [dispatch, wordBank, mustBeValidWord]);
   return newAnswerInfo;
-}
-
-function useWordBank() {
-  const wordBank = useAppSelector((state) => state.game.wordBank);
-  const dispatch = useAppDispatch();
-  useEffect(() => {
-    dispatch(fetchWordBank());
-  }, [dispatch]);
-  return wordBank;
 }
 
 export default NewGame;

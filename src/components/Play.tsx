@@ -3,6 +3,7 @@ import Game from "./Game";
 import { useAnswerInfoParams } from "../routes";
 import { useAppDispatch, useAppSelector } from "../store";
 import gameSlice from "../store/gameSlice";
+import Spinner from "./Spinner";
 
 const Play: React.FC = () => {
   const answerInfo = useAnswerInfoParams();
@@ -22,7 +23,14 @@ const Play: React.FC = () => {
         gap: 30,
       }}
     >
-      {answer && <Game key={answer} answer={answer} />}
+      {answer ? (
+        <Game key={answer} answer={answer} />
+      ) : (
+        <div>
+          Fetching answer for game
+          <Spinner size={15} />
+        </div>
+      )}
     </div>
   );
 };

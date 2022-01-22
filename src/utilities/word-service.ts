@@ -61,6 +61,6 @@ export function getDefinition(word: string) {
   });
 }
 
-export function getWordBank(): Promise<WordBank> {
-  return Promise.resolve(wordBank);
+export function getWordBank(): WordBank {
+  return wordBank;
 }
