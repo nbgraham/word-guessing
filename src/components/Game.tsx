@@ -5,17 +5,17 @@ import { CharacterStatus, WordStatus } from "../utilities/types";
 import gameSlice from "../store/gameSlice";
 import { datamuseApi } from "../services/datamuse-api";
 import Guess from "./Guess";
+import { chooseBestGuess } from "../utilities/guess";
+
+const EMPTY: [] = [];
 
 const Game: React.FC<{
   answer: string;
 }> = ({ answer }) => {
   const answerState = useAppSelector((state) => state.game.answers[answer]);
-  const guesses = useMemo(() => answerState?.guesses ?? [], [answerState]);
-  const eliminatedLetters = useMemo(
-    () => answerState?.eliminatedLetters ?? [],
-    [answerState]
-  );
-  const foundLetters = answerState?.foundLetters ?? [];
+  const guesses = answerState?.guesses ?? EMPTY;
+  const eliminatedLetters = answerState?.eliminatedLetters ?? EMPTY;
+  const foundLetters = answerState?.foundLetters ?? EMPTY;
   const won = answerState?.won ?? false;
 
   const dispatch = useAppDispatch();
@@ -49,27 +49,21 @@ const Game: React.FC<{
       })
       .then((wordsInfo) => {
         const pastGuesses = guesses.map((guess) =>
-          guess
-            .map((status) => status.character)
-            .join("")
-            .toUpperCase()
+          guess.map((status) => status.character).join("")
         );
-        const newWordInfos = wordsInfo
-          .filter(
-            (wordInfo) => !pastGuesses.includes(wordInfo.word.toUpperCase())
-          )
-          .filter((wordInfo) =>
-            wordInfo.word
-              .toUpperCase()
-              .split("")
-              .every((letter) => !eliminatedLetters.includes(letter))
-          )
-          .sort((a, b) => (b.frequency ?? 0) - (a.frequency ?? 0))[0];
-        if (newWordInfos?.word) {
-          handleSubmitGuess(newWordInfos.word);
+
+        const bestGuess = chooseBestGuess({
+          wordsInfo,
+          pastGuesses,
+          eliminatedLetters,
+          foundLetters,
+        });
+
+        if (bestGuess) {
+          handleSubmitGuess(bestGuess);
         }
       });
-  }, [guesses, eliminatedLetters, handleSubmitGuess]);
+  }, [guesses, eliminatedLetters, foundLetters, handleSubmitGuess]);
 
   return (
     <div
