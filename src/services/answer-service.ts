@@ -1,5 +1,7 @@
+import { random } from "../utilities/array";
 import { Encryption } from "../utilities/encryption";
 import { VersionKey } from "../utilities/types";
+import { datamuseApi } from "./datamuse-api";
 import { WordBankService } from "./word-bank-service";
 import { WordService } from "./word-service";
 import { wordsApi } from "./words-api";
@@ -86,11 +88,70 @@ export class WordsApiAnswerService extends AnswerService {
         );
       }
     }
-    
+
     throw new Error(`Used all ${tries} tries and could not get a common word`);
   }
 
   getAnswer(answerKey: string): Promise<string | undefined> {
     return Promise.resolve(this.encryption.decrypt(answerKey));
+  }
+}
+
+export class DatamuseApiAnswerService extends AnswerService {
+  encryption: Encryption;
+  minFrequency = 10;
+
+  constructor(version: VersionKey) {
+    super(version);
+    this.encryption = new Encryption();
+  }
+
+  async getNewAnswerKey(): Promise<string | undefined> {
+    let tries = 0;
+    while (tries < 10) {
+      tries++;
+
+      const limitStart = Math.random() < 0.5;
+      const randomLetter = this.getRandomLetter();
+      const spelledLike = `${limitStart ? randomLetter : "?"}???${
+        !limitStart ? randomLetter : "?"
+      }`;
+
+      const wordsInfo = await datamuseApi.getWordsInfo({
+        spelledLike,
+        max: 100,
+        metadata: {
+          frequency: true,
+        },
+      });
+
+      const frequentWords = wordsInfo
+        .filter(
+          (wordInfo) =>
+            wordInfo.frequency && wordInfo.frequency > this.minFrequency
+        )
+        .filter((wordInfo) => /^[a-zA-Z]{5}$/.test(wordInfo.word));
+
+      const chosenWordInfo = random(frequentWords);
+      const word = chosenWordInfo.word;
+      if (word) {
+        return this.encryption.encrypt(word);
+      } else {
+        console.debug(
+          `No matches with search "${spelledLike}". Looking for another word.`
+        );
+      }
+    }
+
+    throw new Error(`Used all ${tries} tries and could not get a common word`);
+  }
+
+  getAnswer(answerKey: string): Promise<string | undefined> {
+    return Promise.resolve(this.encryption.decrypt(answerKey));
+  }
+
+  private getRandomLetter() {
+    const letters = "qwertyuiopasdfghjklzxcvbnm";
+    return random(letters.split(""));
   }
 }
