@@ -1,6 +1,7 @@
 import React, {
   CSSProperties,
   FormEventHandler,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -21,20 +22,66 @@ const Game: React.FC<{
   answer: string;
 }> = ({ answer }) => {
   const answerState = useAppSelector((state) => state.game.answers[answer]);
-  const guesses = answerState?.guesses ?? [];
-  const eliminatedLetters = answerState?.eliminatedLetters ?? [];
+  const guesses = useMemo(() => answerState?.guesses ?? [], [answerState]);
+  const eliminatedLetters = useMemo(
+    () => answerState?.eliminatedLetters ?? [],
+    []
+  );
   const foundLetters = answerState?.foundLetters ?? [];
   const won = answerState?.won ?? false;
 
   const dispatch = useAppDispatch();
-  const handleSubmitGuess = (guess: string) => {
-    dispatch(
-      gameSlice.actions.submitGuess({
-        guess,
-        answer,
+  const handleSubmitGuess = useCallback(
+    (guess: string) => {
+      dispatch(
+        gameSlice.actions.submitGuess({
+          guess,
+          answer,
+        })
+      );
+    },
+    [dispatch, answer]
+  );
+
+  const autoGuess = useCallback(() => {
+    const spelledLike = new Array(5)
+      .fill(null)
+      .map((_, i) => {
+        const correctLetter = guesses.find(
+          (guess) => guess[i].inPosition && guess[i].inWord
+        );
+        return correctLetter?.[i].character ?? "?";
       })
-    );
-  };
+      .join("");
+
+    return datamuseApi
+      .getWordsInfo({
+        spelledLike: spelledLike,
+        max: 20,
+      })
+      .then((wordsInfo) => {
+        const pastGuesses = guesses.map((guess) =>
+          guess
+            .map((status) => status.character)
+            .join("")
+            .toUpperCase()
+        );
+        const newWordInfos = wordsInfo
+          .filter(
+            (wordInfo) => !pastGuesses.includes(wordInfo.word.toUpperCase())
+          )
+          .filter((wordInfo) =>
+            wordInfo.word
+              .toUpperCase()
+              .split("")
+              .every((letter) => !eliminatedLetters.includes(letter))
+          )
+          .sort((a, b) => (b.frequency ?? 0) - (a.frequency ?? 0))[0];
+        if (newWordInfos?.word) {
+          handleSubmitGuess(newWordInfos.word);
+        }
+      });
+  }, [guesses, eliminatedLetters, handleSubmitGuess]);
 
   return (
     <div
@@ -59,12 +106,15 @@ const Game: React.FC<{
       {won ? (
         <Victory guesses={guesses} answer={answer} />
       ) : (
-        <Guess
-          key={guesses.length}
-          onSubmitGuess={handleSubmitGuess}
-          eliminatedLetters={eliminatedLetters}
-          foundLetters={foundLetters}
-        />
+        <>
+          <button onClick={autoGuess}>Guess for me</button>
+          <Guess
+            key={guesses.length}
+            onSubmitGuess={handleSubmitGuess}
+            eliminatedLetters={eliminatedLetters}
+            foundLetters={foundLetters}
+          />
+        </>
       )}
     </div>
   );
