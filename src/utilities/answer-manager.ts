@@ -3,9 +3,7 @@ import { VersionKey } from "./types";
 import { WordBankService } from "./word-bank-service";
 import { DictionaryApi } from "./word-service";
 
-const wordBankService = new WordBankService(
-  () => import("../assets/word-bank.json")
-); 
+const wordBankService = new WordBankService('knuth'); 
 const dictionaryApi = new DictionaryApi();
 
 const answerServices: Record<VersionKey, AnswerService> = {
