@@ -24,7 +24,7 @@ type WordInfo = {
   word: string;
   frequency?: number;
 };
-// TODO: test
+
 export function chooseBestGuess(options: {
   wordsInfo: WordInfo[];
   pastGuesses: string[];
@@ -33,43 +33,36 @@ export function chooseBestGuess(options: {
 }) {
   const { wordsInfo, pastGuesses, eliminatedLetters, foundLetters } = options;
 
-  function equalIgnoringCase(a: string, b: string) {
-    return a.toUpperCase() === b.toUpperCase();
+  function contains(list: string[], s: string) {
+    return list.some((item) => item.toUpperCase() === s.toUpperCase());
   }
 
-  const guessWordInfos = wordsInfo
+  const guessScores = wordsInfo
     .map((wordInfo) => {
       return {
-        ...wordInfo,
+        word: wordInfo.word,
         letters: wordInfo.word.split(""),
+        score: 0,
+        frequency: wordInfo.frequency ?? 0,
       };
     })
     // has not already been guessed
-    .filter(
-      (wordInfo) =>
-        !pastGuesses.some((pastGuess) =>
-          equalIgnoringCase(pastGuess, wordInfo.word)
-        )
-    )
-    // does not include any eliminated letters
-    .filter((wordInfo) =>
-      wordInfo.letters.every(
-        (letter) =>
-          !eliminatedLetters.some((eliminatedLetter) =>
-            equalIgnoringCase(eliminatedLetter, letter)
-          )
-      )
-    )
-    // includes all of the found letters
-    .filter((wordInfo) =>
-      foundLetters.every((foundLetter) =>
-        wordInfo.letters.some((letter) =>
-          equalIgnoringCase(letter, foundLetter)
-        )
-      )
-    )
-    // sort the most frequent words to the beginning
-    .sort((a, b) => (b.frequency ?? 0) - (a.frequency ?? 0));
+    .filter((wordInfo) => !contains(pastGuesses, wordInfo.word));
 
-  return guessWordInfos[0]?.word;
+  guessScores.forEach((guess) => {
+    guess.letters.forEach((letter) => {
+      if (contains(foundLetters, letter)) {
+        guess.score++;
+      }
+      if (contains(eliminatedLetters, letter)) {
+        guess.score--;
+      }
+    });
+  });
+
+  guessScores.sort(
+    (a, b) => b.score - a.score || b.frequency - a.frequency
+  );
+
+  return guessScores[0]?.word;
 }
