@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { isAWord } from "../utilities/word-service";
+import { DictionaryApi } from "../utilities/word-service";
 import { useAppDispatch, useAppSelector } from "../store";
 import Keyboard, { BACKSPACE, SUBMIT } from "./Keyboard";
 import Spinner from "./Spinner";
@@ -16,6 +16,9 @@ import gameSlice from "../store/gameSlice";
 
 const SIZE = 5;
 const PATTERN = "^[a-zA-Z]*$";
+
+// TODO: singleton?
+const dictionaryApi = new DictionaryApi();
 
 const Game: React.FC<{
   answer: string;
@@ -110,7 +113,7 @@ const Guess: React.FC<{
     setSubmitting(false);
   };
   const asyncValidation = async (value: string) => {
-    if (guessesMustBeValidWords && !(await isAWord(value)))
+    if (guessesMustBeValidWords && !(await dictionaryApi.isAWord(value)))
       return `"${value}" is not an English word`;
   };
 

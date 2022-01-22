@@ -1,11 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Loader } from "../utilities/types";
-import { getDefinition, WordResult } from "../utilities/word-service";
+import { DictionaryApi, WordResult } from "../utilities/word-service";
+
+const dictionaryApi = new DictionaryApi();
 
 export const fetchDefinition = createAsyncThunk(
   "definition/fetchDefinition",
   async (word: string) => {
-    const results = await getDefinition(word);
+    const results = await dictionaryApi.getDefinition(word);
     return results;
   }
 );

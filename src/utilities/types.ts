@@ -4,10 +4,13 @@ export type CharacterStatus = {
   inPosition: boolean;
 };
 export type WordStatus = CharacterStatus[];
+
+export type VersionKey = number;
 export type AnswerInfo = {
-  answerId: number;
-  wordBankId: number;
+  answerKey: string;
+  answerServiceVersion: VersionKey;
 };
+
 type LoaderState = "initial" | "loading" | "done" | "error";
 export type Loader<T> = {
   state: LoaderState;

@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { getAnswerService } from "../utilities/answer-manager";
 import { unique } from "../utilities/array";
 import { evaluateGuess } from "../utilities/guess";
 import { WordStatus, AnswerInfo, Loader } from "../utilities/types";
-import { WordBank, isAWord, getWordBank } from "../utilities/word-service";
 
 type GameState = {
   answers: Record<
@@ -14,9 +14,8 @@ type GameState = {
       won?: boolean;
     }
   >;
-  wordBank: WordBank;
   newAnswerInfo: Loader<AnswerInfo>;
-  answer?: string;
+  answer: Loader<string>;
 };
 
 const initialState: GameState = {
@@ -24,7 +23,9 @@ const initialState: GameState = {
   newAnswerInfo: {
     state: "initial",
   },
-  wordBank: getWordBank()
+  answer: {
+    state: "initial",
+  },
 };
 
 const gameSlice = createSlice({
@@ -60,22 +61,14 @@ const gameSlice = createSlice({
         ...foundLetters,
       ]);
     },
-    startGame(state, action: PayloadAction<AnswerInfo>) {
-      const { wordBank } = state;
-      if (!wordBank) {
-        console.error('Word bank must exist when trying to start a game');
-        return;
-      }
-      const answerInfo = action.payload;
-      state.answer =
-        answerInfo && wordBank && wordBank.version === answerInfo.wordBankId
-          ? wordBank.words[answerInfo.answerId].toUpperCase()
-          : undefined;
-      state.newAnswerInfo = { state: "initial" };
-    },
   },
   extraReducers: (builder) => {
     builder
+      .addCase(pickNewAnswer.pending, (state) => {
+        state.newAnswerInfo = {
+          state: "loading",
+        };
+      })
       .addCase(pickNewAnswer.fulfilled, (state, action) => {
         state.newAnswerInfo = {
           state: "done",
@@ -87,35 +80,47 @@ const gameSlice = createSlice({
           state: "error",
         };
       });
+    builder
+      .addCase(startNewGame.pending, (state) => {
+        state.answer = {
+          state: "loading",
+        };
+      })
+      .addCase(startNewGame.fulfilled, (state, action) => {
+        state.answer = {
+          state: "done",
+          value: action.payload,
+        };
+      })
+      .addCase(startNewGame.rejected, (state, action) => {
+        state.answer = {
+          state: "error",
+        };
+      });
   },
 });
 export default gameSlice;
 
 export const pickNewAnswer = createAsyncThunk(
   "game/pickNewAnswer",
-  async ({
-    mustBeValidWord,
-    wordBank,
-  }: {
-    mustBeValidWord: boolean;
-    wordBank: WordBank;
-  }) => {
-    let tries = 0;
-    while (tries < 10) {
-      tries++;
-      const words = wordBank.words;
-      const index = Math.floor(words.length * Math.random());
-      const word = words[index];
-
-      if (!mustBeValidWord || (await isAWord(word))) {
-        return {
-          answerId: index,
-          wordBankId: wordBank?.version,
-        } as AnswerInfo;
-      } else {
-        console.warn(`"${word}" is not a word. Looking for another word.`);
-      }
+  async ({ mustBeValidWord }: { mustBeValidWord: boolean }) => {
+    const answerService = getAnswerService();
+    const answerKey = await answerService.getNewAnswerKey(mustBeValidWord);
+    if (answerKey) {
+      const answerInfo: AnswerInfo = {
+        answerServiceVersion: answerService.version,
+        answerKey: answerKey,
+      };
+      return answerInfo;
     }
-    throw new Error("Ran out of tries to pick a new answer");
+  }
+);
+
+export const startNewGame = createAsyncThunk(
+  "game/startGame",
+  async (answerInfo: AnswerInfo) => {
+    const answerService = getAnswerService(answerInfo.answerServiceVersion);
+    const answer = await answerService.getAnswer(answerInfo.answerKey);
+    return answer;
   }
 );

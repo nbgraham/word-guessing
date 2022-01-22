@@ -1,9 +1,4 @@
-import wordBank from "../assets/word-bank.json"; // https://www-cs-faculty.stanford.edu/~knuth/sgb-words.txt
 
-export type WordBank = {
-  version: number;
-  words: string[];
-};
 
 type Definition = {
   definition: string;
@@ -36,31 +31,35 @@ async function cached(
   return cache[key];
 }
 
-export async function isAWord(word: string) {
-  const wordResults = await getDefinition(word);
-  return !!wordResults;
+export interface WordService {
+  isAWord(word: string): Promise<boolean>;
+  getDefinition(word: string): Promise<WordResult[] | undefined>;
 }
 
-export function getDefinition(word: string) {
-  return cached(word.toUpperCase(), async () => {
-    if (!word) return undefined;
+export class DictionaryApi implements WordService {
 
-    const result = await fetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
-    );
-    const data: Response = await result.json();
-
-    const found =
-      result.status < 400 &&
-      Array.isArray(data) &&
-      data.some((wordResult) => wordResult.word);
-
-    if (found) {
-      return data;
-    }
-  });
-}
-
-export function getWordBank(): WordBank {
-  return wordBank;
+  async isAWord(word: string) {
+    const wordResults = await this.getDefinition(word);
+    return !!wordResults;
+  }
+  
+  async getDefinition(word: string) {
+    return cached(word.toUpperCase(), async () => {
+      if (!word) return undefined;
+  
+      const result = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+      );
+      const data: Response = await result.json();
+  
+      const found =
+        result.status < 400 &&
+        Array.isArray(data) &&
+        data.some((wordResult) => wordResult.word);
+  
+      if (found) {
+        return data;
+      }
+    });
+  }
 }
