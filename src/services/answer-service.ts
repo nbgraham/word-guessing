@@ -1,9 +1,7 @@
 import { random } from "../utilities/array";
 import { Encryption } from "../utilities/encryption";
-import { VersionKey, WordValidator } from "../utilities/types";
+import { VersionKey, WordBank, WordValidator } from "../utilities/types";
 import { datamuseApi } from "./datamuse-api";
-import { WordBankService } from "./word-bank-service";
-import { wordsApi } from "./words-api";
 
 abstract class AnswerService {
   version: VersionKey;
@@ -18,19 +16,18 @@ abstract class AnswerService {
 }
 export type { AnswerService };
 
-
 export class StaticAnswerService extends AnswerService {
   private wordValidator: WordValidator;
-  private wordBankService: WordBankService;
+  private getWordBank: () => Promise<WordBank>;
 
   constructor(
     version: VersionKey,
     wordValidator: WordValidator,
-    wordBankService: WordBankService
+    getWordBank: () => Promise<WordBank>
   ) {
     super(version);
-    this.wordBankService = wordBankService;
     this.wordValidator = wordValidator;
+    this.getWordBank = getWordBank;
   }
 
   async getNewAnswerKey(mustBeValidWord: boolean): Promise<string | undefined> {
@@ -44,7 +41,8 @@ export class StaticAnswerService extends AnswerService {
       const index = Math.floor(words.length * Math.random());
       const word = words[index];
 
-      const valid = !mustBeValidWord || (await this.wordValidator.isAWord(word));
+      const valid =
+        !mustBeValidWord || (await this.wordValidator.isAWord(word));
       if (valid) {
         return index.toString();
       } else {
@@ -59,41 +57,6 @@ export class StaticAnswerService extends AnswerService {
     const wordBank = await this.getWordBank();
     const index = parseInt(answerKey);
     return wordBank?.words[index];
-  }
-
-  private getWordBank() {
-    return this.wordBankService.getWordBank("knuth");
-  }
-}
-
-export class WordsApiAnswerService extends AnswerService {
-  encryption: Encryption;
-
-  constructor(version: VersionKey) {
-    super(version);
-    this.encryption = new Encryption();
-  }
-
-  async getNewAnswerKey(): Promise<string | undefined> {
-    let tries = 0;
-    while (tries < 10) {
-      tries++;
-
-      const wordInfo = await wordsApi.getRandomWord();
-      if (wordsApi.isCommon(wordInfo.word)) {
-        return this.encryption.encrypt(wordInfo.wordKey);
-      } else {
-        console.debug(
-          `"${wordInfo.wordKey}" is not a common word. Looking for another word.`
-        );
-      }
-    }
-
-    throw new Error(`Used all ${tries} tries and could not get a common word`);
-  }
-
-  getAnswer(answerKey: string): Promise<string | undefined> {
-    return Promise.resolve(this.encryption.decrypt(answerKey));
   }
 }
 

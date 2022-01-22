@@ -21,3 +21,9 @@ export type Loader<T> = {
 export interface WordValidator {
   isAWord(word: string): Promise<boolean>
 }
+
+export type WordBank = {
+  source?: string;
+  version: number;
+  words: string[];
+};
