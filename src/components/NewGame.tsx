@@ -28,10 +28,13 @@ function useNewAnswerInfo() {
   const mustBeValidWord = useAppSelector(
     (state) => state.settings.guessesMustBeValidWords
   );
+  const answerServiceVersion = useAppSelector(
+    (state) => state.settings.answerServiceVersion
+  );
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(pickNewAnswer({ mustBeValidWord }));
-  }, [dispatch, mustBeValidWord]);
+    dispatch(pickNewAnswer({ mustBeValidWord, answerServiceVersion }));
+  }, [dispatch, mustBeValidWord, answerServiceVersion]);
   return newAnswerInfo;
 }
 

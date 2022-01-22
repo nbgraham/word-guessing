@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getAnswerService } from "../services/answer-service-factory";
 import { unique } from "../utilities/array";
 import { evaluateGuess } from "../utilities/guess";
-import { WordStatus, AnswerInfo, Loader } from "../utilities/types";
+import { WordStatus, AnswerInfo, Loader, VersionKey } from "../utilities/types";
 
 type GameState = {
   answers: Record<
@@ -105,8 +105,8 @@ export default gameSlice;
 
 export const pickNewAnswer = createAsyncThunk(
   "game/pickNewAnswer",
-  async ({ mustBeValidWord }: { mustBeValidWord: boolean }) => {
-    const answerService = getAnswerService();
+  async ({ mustBeValidWord, answerServiceVersion }: { mustBeValidWord: boolean, answerServiceVersion: VersionKey }) => {
+    const answerService = getAnswerService(answerServiceVersion);
     const answerKey = await answerService.getNewAnswerKey(mustBeValidWord);
     if (!answerKey) throw new Error("Could not get a new answer key");
     const answerInfo: AnswerInfo = {
