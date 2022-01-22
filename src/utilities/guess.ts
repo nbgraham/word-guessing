@@ -46,23 +46,30 @@ export function chooseBestGuess(options: {
         frequency: wordInfo.frequency ?? 0,
       };
     })
-    // has not already been guessed
     .filter((wordInfo) => !contains(pastGuesses, wordInfo.word));
 
   guessScores.forEach((guess) => {
-    guess.letters.forEach((letter) => {
-      if (contains(foundLetters, letter)) {
+    foundLetters.forEach((foundLetter) => {
+      if (contains(guess.letters, foundLetter)) {
         guess.score++;
       }
-      if (contains(eliminatedLetters, letter)) {
+    });
+    eliminatedLetters.forEach((eliminatedLetter) => {
+      if (contains(guess.letters, eliminatedLetter)) {
         guess.score--;
+      }
+    });
+    guess.letters.forEach((guessLetter) => {
+      const isNewLetter =
+        !contains(foundLetters, guessLetter) &&
+        !contains(eliminatedLetters, guessLetter);
+      if (isNewLetter) {
+        guess.score += 0.5;
       }
     });
   });
 
-  guessScores.sort(
-    (a, b) => b.score - a.score || b.frequency - a.frequency
-  );
+  guessScores.sort((a, b) => b.score - a.score || b.frequency - a.frequency);
 
   return guessScores[0]?.word;
 }
