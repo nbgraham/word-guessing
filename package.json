@@ -49,7 +49,8 @@
   },
   "devDependencies": {
     "gh-pages": "^3.2.3",
-    "prettier": "^2.5.1"
+    "prettier": "^2.5.1",
+    "react-test-renderer": "^17.0.2"
   },
   "engines": {
     "node": "16.x.x"

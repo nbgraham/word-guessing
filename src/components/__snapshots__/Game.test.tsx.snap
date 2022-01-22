@@ -1,0 +1,541 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "display": "flex",
+      "flexDirection": "column",
+      "gap": 10,
+      "paddingTop": 20,
+    }
+  }
+>
+  <div>
+    <button
+      onClick={[Function]}
+    >
+      Just tell me the answer
+    </button>
+  </div>
+  <button
+    onClick={[Function]}
+  >
+    Guess for me
+  </button>
+  <form
+    onSubmit={[Function]}
+  >
+    <input
+      disabled={false}
+      maxLength={5}
+      minLength={5}
+      onChange={[Function]}
+      pattern="^[a-zA-Z]*$"
+      placeholder="Guess"
+      required={true}
+      title="Only letters are allowed"
+      type="text"
+      value=""
+    />
+    <button
+      disabled={false}
+      type="submit"
+    >
+      Submit
+    </button>
+  </form>
+  <div
+    style={
+      Object {
+        "display": "flex",
+        "flexDirection": "column",
+        "gap": 2,
+        "maxWidth": 400,
+        "paddingTop": 20,
+        "width": "100vw",
+      }
+    }
+  >
+    <div
+      style={
+        Object {
+          "display": "flex",
+          "gap": 4,
+          "justifyContent": "center",
+        }
+      }
+    >
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        Q
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        W
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        E
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        R
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        T
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        Y
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        U
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        I
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        O
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        P
+      </button>
+    </div>
+    <div
+      style={
+        Object {
+          "display": "flex",
+          "gap": 4,
+          "justifyContent": "center",
+        }
+      }
+    >
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        A
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        S
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        D
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        F
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        G
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        H
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        J
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        K
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        L
+      </button>
+    </div>
+    <div
+      style={
+        Object {
+          "display": "flex",
+          "gap": 4,
+          "justifyContent": "center",
+        }
+      }
+    >
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        Z
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        X
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        C
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        V
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        B
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        N
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        M
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        &lt;
+      </button>
+      <button
+        onClick={[Function]}
+        style={
+          Object {
+            "backgroundColor": "#808080",
+            "borderRadius": 4,
+            "cursor": "pointer",
+            "display": "flex",
+            "flex": 1,
+            "justifyContent": "center",
+            "padding": "15px 0px",
+          }
+        }
+      >
+        =
+      </button>
+    </div>
+  </div>
+</div>
+`;
