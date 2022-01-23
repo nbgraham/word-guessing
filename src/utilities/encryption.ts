@@ -7,7 +7,7 @@ export class Encryption {
   encryptOperations: Operation[];
   decryptOperations: Operation[];
 
-  constructor(version = 1) {
+  constructor(version: 1 | 2) {
     const extraOps =
       version === 1
         ? [new Reverse()]

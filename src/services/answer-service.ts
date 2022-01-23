@@ -64,9 +64,9 @@ export class DatamuseApiAnswerService extends AnswerService {
   encryption: Encryption;
   minFrequency = 10;
 
-  constructor(version: VersionKey) {
+  constructor(version: VersionKey, encryption: Encryption) {
     super(version);
-    this.encryption = new Encryption();
+    this.encryption = encryption;
   }
 
   async getNewAnswerKey(): Promise<string | undefined> {
