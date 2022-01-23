@@ -1,5 +1,7 @@
 /**
  * NOT cryptographically secure
+ * Just made to obscure the answer a bit in the URL
+ * so that it doesn't give away anything obvious at a glance
  */
 export class Encryption {
   encryptOperations: Operation[];
@@ -78,29 +80,43 @@ class Reverse implements Operation {
 }
 
 class Shift implements Operation {
-  indexToShift: Array<number>;
   letters = "qwertyuiopasdfghjklzxcvbnm";
 
+  indexToShift: Array<number>;
   constructor(indexToShift: Array<number>) {
     this.indexToShift = indexToShift;
   }
 
   apply(word: Word): Word {
-    return word
-      .map((letter) => this.letters.indexOf(letter))
-      .map(
-        (letterIndex, wordIndex) =>
-          (letterIndex + this.indexToShift[wordIndex]) % this.letters.length
-      )
-      .map((letterIndex) => this.letters[letterIndex]);
+    this.validate(word);
+    const shiftedNumbers = this.toNumbers(word).map(
+      (letterIndex, wordIndex) => letterIndex + this.indexToShift[wordIndex]
+    );
+    return this.toWord(shiftedNumbers);
   }
+
   revert(word: Word): Word {
-    return word
-      .map((letter) => this.letters.indexOf(letter))
-      .map(
-        (letterIndex, wordIndex) =>
-          (letterIndex - this.indexToShift[wordIndex] + this.letters.length) % this.letters.length
-      )
+    this.validate(word);
+    const unshiftedNumbers = this.toNumbers(word).map(
+      (letterIndex, wordIndex) => letterIndex - this.indexToShift[wordIndex]
+    );
+    return this.toWord(unshiftedNumbers);
+  }
+
+  private validate(word: Word) {
+    if (word.length > this.indexToShift.length)
+      throw new Error(
+        `This shift instance can only handle words up to ${this.indexToShift.length} characters. Cannot handle "${word}"`
+      );
+  }
+
+  private toNumbers(word: Word): number[] {
+    return word.map((letter) => this.letters.indexOf(letter));
+  }
+
+  private toWord(numbers: number[]): Word {
+    return numbers
+      .map((value) => (value + this.letters.length) % this.letters.length)
       .map((letterIndex) => this.letters[letterIndex]);
   }
 }
@@ -118,9 +134,15 @@ class Cipher implements Operation {
   }
 
   apply(word: Word): Word {
-    return word.map((letter) => this.cipher[letter]);
+    return word.map((letter) => {
+      if (this.cipher[letter]) return this.cipher[letter];
+      throw new Error(`Unknown letter: "${letter}"`);
+    });
   }
   revert(word: Word): Word {
-    return word.map((letter) => this.reverseCipher[letter]);
+    return word.map((letter) => {
+      if (this.reverseCipher[letter]) return this.reverseCipher[letter];
+      throw new Error(`Unknown letter: "${letter}"`);
+    });
   }
 }
