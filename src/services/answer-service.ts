@@ -86,10 +86,12 @@ export class DatamuseApiAnswerService extends AnswerService {
         max: 100,
         metadata: {
           frequency: true,
+          definitions: true,
         },
       });
 
       const frequentWords = wordsInfo
+        .filter((wordInfo) => (wordInfo.defs || []).length > 0)
         .filter(
           (wordInfo) =>
             wordInfo.frequency && wordInfo.frequency > this.minFrequency
