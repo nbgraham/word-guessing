@@ -1,11 +1,11 @@
-import React, { CSSProperties, useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import Victory from "./Victory";
-import { CharacterStatus, WordStatus } from "../utilities/types";
 import gameSlice from "../store/gameSlice";
 import { datamuseApi } from "../services/datamuse-api";
 import Guess from "./Guess";
 import { chooseBestGuess } from "../utilities/guess";
+import WordResult from "./WordResult";
 
 const EMPTY: [] = [];
 
@@ -46,8 +46,8 @@ const Game: React.FC<{
       .getWordsInfo({
         spelledLike: spelledLike,
         metadata: {
-          frequency: true
-        }
+          frequency: true,
+        },
       })
       .then((wordsInfo) => {
         const pastGuesses = guesses.map((guess) =>
@@ -102,40 +102,6 @@ const Game: React.FC<{
       )}
     </div>
   );
-};
-
-const WordResult: React.FC<{
-  guessStatus: WordStatus;
-}> = ({ guessStatus }) => {
-  return (
-    <div style={{ display: "flex", maxWidth: 300 }}>
-      {guessStatus.map((status, index) => (
-        <WordLetter key={index} status={status} />
-      ))}
-    </div>
-  );
-};
-
-const WordLetter: React.FC<{ status: CharacterStatus }> = ({ status }) => {
-  const color = useMemo(
-    () =>
-      status.inWord ? (status.inPosition ? "green" : "yellow") : "#dddddd",
-    [status]
-  );
-  const style = useMemo<CSSProperties>(() => {
-    return {
-      display: "flex",
-      flex: 1,
-      padding: "15px 15px",
-      margin: 3,
-      border: "1px solid black",
-      borderRadius: 4,
-      justifyContent: "center",
-      backgroundColor: color,
-    };
-  }, [color]);
-
-  return <div style={style}>{status.character}</div>;
 };
 
 export default Game;
