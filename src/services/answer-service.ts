@@ -1,4 +1,5 @@
 import { random } from "../utilities/array";
+import { WORD_LENGTH } from "../utilities/contants";
 import { Encryption } from "../utilities/encryption";
 import { VersionKey, WordBank, WordValidator } from "../utilities/types";
 import { datamuseApi } from "./datamuse-api";
@@ -75,8 +76,8 @@ export class DatamuseApiAnswerService extends AnswerService {
       tries++;
 
       const randomLetter = this.getRandomLetter();
-      const randomIndex = Math.floor(Math.random() * 5);
-      const spelledLike = new Array(5)
+      const randomIndex = Math.floor(Math.random() * WORD_LENGTH);
+      const spelledLike = new Array(WORD_LENGTH)
         .fill(null)
         .map((_, i) => (i === randomIndex ? randomLetter : "?"))
         .join("");
@@ -96,7 +97,9 @@ export class DatamuseApiAnswerService extends AnswerService {
           (wordInfo) =>
             wordInfo.frequency && wordInfo.frequency > this.minFrequency
         )
-        .filter((wordInfo) => /^[a-zA-Z]{5}$/.test(wordInfo.word));
+        .filter((wordInfo) =>
+          new RegExp(`^[a-zA-Z]{${WORD_LENGTH}}$`).test(wordInfo.word)
+        );
 
       const chosenWordInfo = random(frequentWords);
       const word = chosenWordInfo?.word;
