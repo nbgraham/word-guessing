@@ -37,7 +37,7 @@ export async function getBestNextGuess(
     return DEFAULT_FIRST_GUESS;
   }
 
-  const spelledLike = getWordMatch(guesses);
+  const spelledLike = getWordMatcher(guesses);
 
   const wordsInfo = await datamuseApi.getWordsInfo({
     spelledLike: spelledLike,
@@ -60,7 +60,7 @@ export async function getBestNextGuess(
   return bestGuess;
 }
 
-export function getWordMatch(guesses: WordStatus[]) {
+export function getWordMatcher(guesses: WordStatus[]) {
   return new Array(5)
     .fill(null)
     .map((_, i) => {
