@@ -1,13 +1,14 @@
 {
   "files": {
-    "main.js": "/word-guessing/static/js/main.8a9f7125.js",
+    "main.js": "/word-guessing/static/js/main.3afdcfe2.js",
     "static/js/66.fbc3c0d6.chunk.js": "/word-guessing/static/js/66.fbc3c0d6.chunk.js",
     "static/js/470.c1178627.chunk.js": "/word-guessing/static/js/470.c1178627.chunk.js",
+    "static/js/793.cdf279d9.chunk.js": "/word-guessing/static/js/793.cdf279d9.chunk.js",
     "static/media/spinner.gif": "/word-guessing/static/media/spinner.8a8b53e0aa92165a507f.gif",
     "index.html": "/word-guessing/index.html",
-    "main.8a9f7125.js.map": "/word-guessing/static/js/main.8a9f7125.js.map"
+    "main.3afdcfe2.js.map": "/word-guessing/static/js/main.3afdcfe2.js.map"
   },
   "entrypoints": [
-    "static/js/main.8a9f7125.js"
+    "static/js/main.3afdcfe2.js"
   ]
 }
