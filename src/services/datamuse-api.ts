@@ -9,12 +9,22 @@ type Word = {
 };
 
 class DatamuseApi implements WordValidator {
-  async isAWord(word: string) {
+  async isValidAnswer(word: string) {
     const definitions = await this.getDefinitions(word);
     return (definitions?.length ?? 0) > 0;
   }
 
   async getDefinitions(word: string) {
+    const matchingWordInfo = await this.getWordInfo(word);
+    return matchingWordInfo?.defs;
+  }
+
+  async isAWord(word: string) {
+    const matchingWordInfo = await this.getWordInfo(word);
+    return !!matchingWordInfo;
+  }
+
+  private async getWordInfo(word: string) {
     const wordsInfo = await this.getWordsInfo({
       max: 5,
       spelledLike: word,
@@ -25,7 +35,7 @@ class DatamuseApi implements WordValidator {
     const matchingWordInfo = wordsInfo.find(
       (wordInfo) => wordInfo.word.toLowerCase() === word.toLowerCase()
     );
-    return matchingWordInfo?.defs;
+    return matchingWordInfo;
   }
 
   async getWordsInfo(options: {
