@@ -42,7 +42,7 @@ export class StaticAnswerService extends AnswerService {
       const word = words[index];
 
       const valid =
-        !mustBeValidWord || (await this.wordValidator.isAWord(word));
+        !mustBeValidWord || (await this.wordValidator.isValidAnswer(word));
       if (valid) {
         return index.toString();
       } else {

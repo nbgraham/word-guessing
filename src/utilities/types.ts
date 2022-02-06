@@ -19,7 +19,7 @@ export type Loader<T> = {
 };
 
 export interface WordValidator {
-  isAWord(word: string): Promise<boolean>
+  isValidAnswer(word: string): Promise<boolean>
 }
 
 export type WordBank = {
