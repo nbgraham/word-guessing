@@ -97,7 +97,9 @@ export class DatamuseApiAnswerService extends AnswerService {
           (wordInfo) =>
             wordInfo.frequency && wordInfo.frequency > this.minFrequency
         )
-        .filter((wordInfo) => /^[a-zA-Z]{5}$/.test(wordInfo.word));
+        .filter((wordInfo) =>
+          new RegExp(`^[a-zA-Z]{${WORD_LENGTH}}$`).test(wordInfo.word)
+        );
 
       const chosenWordInfo = random(frequentWords);
       const word = chosenWordInfo?.word;
