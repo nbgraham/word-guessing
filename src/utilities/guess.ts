@@ -98,7 +98,7 @@ export function chooseBestGuess(options: {
         word: wordInfo.word,
         letters: wordInfo.word.split(""),
         score: 0,
-        frequency: wordInfo.frequency ?? 0,
+        frequency: wordInfo.frequency ?? 0.01,
       };
     })
     .filter((wordInfo) => !contains(pastGuesses, wordInfo.word));
