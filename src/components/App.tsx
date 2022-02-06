@@ -10,7 +10,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <h1>Guess the Word!</h1>
+      <h1>Guess the 5-letter Word!</h1>
       <nav>
         <Link to={routes.home}>Home</Link> |&nbsp;
         <Link to={routes.settings}>Settings</Link> |&nbsp;

@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-const defaultOnlineAnswerServiceVersion = 3;
+const defaultOnlineAnswerServiceVersion = 4;
 const defaultOfflineAnswerServiceVersion = 2;
 
 const settingsSlice = createSlice({

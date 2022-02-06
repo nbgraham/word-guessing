@@ -42,7 +42,7 @@ export class StaticAnswerService extends AnswerService {
       const word = words[index];
 
       const valid =
-        !mustBeValidWord || (await this.wordValidator.isAWord(word));
+        !mustBeValidWord || (await this.wordValidator.isValidAnswer(word));
       if (valid) {
         return index.toString();
       } else {
@@ -64,9 +64,9 @@ export class DatamuseApiAnswerService extends AnswerService {
   encryption: Encryption;
   minFrequency = 10;
 
-  constructor(version: VersionKey) {
+  constructor(version: VersionKey, encryption: Encryption) {
     super(version);
-    this.encryption = new Encryption();
+    this.encryption = encryption;
   }
 
   async getNewAnswerKey(): Promise<string | undefined> {
@@ -86,10 +86,12 @@ export class DatamuseApiAnswerService extends AnswerService {
         max: 100,
         metadata: {
           frequency: true,
+          definitions: true,
         },
       });
 
       const frequentWords = wordsInfo
+        .filter((wordInfo) => (wordInfo.defs || []).length > 0)
         .filter(
           (wordInfo) =>
             wordInfo.frequency && wordInfo.frequency > this.minFrequency

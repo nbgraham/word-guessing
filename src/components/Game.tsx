@@ -1,11 +1,10 @@
-import React, { CSSProperties, useCallback, useMemo } from "react";
+import React, { useCallback } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import Victory from "./Victory";
-import { CharacterStatus, WordStatus } from "../utilities/types";
 import gameSlice from "../store/gameSlice";
-import { datamuseApi } from "../services/datamuse-api";
 import Guess from "./Guess";
-import { chooseBestGuess } from "../utilities/guess";
+import { getBestNextGuess } from "../utilities/guess";
+import WordResult from "./WordResult";
 
 const EMPTY: [] = [];
 
@@ -31,40 +30,17 @@ const Game: React.FC<{
     [dispatch, answer]
   );
 
-  const autoGuess = useCallback(() => {
-    const spelledLike = new Array(5)
-      .fill(null)
-      .map((_, i) => {
-        const correctLetter = guesses.find(
-          (guess) => guess[i].inPosition && guess[i].inWord
-        );
-        return correctLetter?.[i].character ?? "?";
-      })
-      .join("");
-
-    return datamuseApi
-      .getWordsInfo({
-        spelledLike: spelledLike,
-        metadata: {
-          frequency: true
-        }
-      })
-      .then((wordsInfo) => {
-        const pastGuesses = guesses.map((guess) =>
-          guess.map((status) => status.character).join("")
-        );
-
-        const bestGuess = chooseBestGuess({
-          wordsInfo,
-          pastGuesses,
-          eliminatedLetters,
-          foundLetters,
-        });
-
-        if (bestGuess) {
-          handleSubmitGuess(bestGuess);
-        }
-      });
+  const autoGuess = useCallback(async () => {
+    const bestNextGuess = await getBestNextGuess(
+      guesses,
+      eliminatedLetters,
+      foundLetters
+    );
+    if (bestNextGuess) {
+      handleSubmitGuess(bestNextGuess);
+    } else {
+      console.error("No best next guess found");
+    }
   }, [guesses, eliminatedLetters, foundLetters, handleSubmitGuess]);
 
   return (
@@ -102,40 +78,6 @@ const Game: React.FC<{
       )}
     </div>
   );
-};
-
-const WordResult: React.FC<{
-  guessStatus: WordStatus;
-}> = ({ guessStatus }) => {
-  return (
-    <div style={{ display: "flex", maxWidth: 300 }}>
-      {guessStatus.map((status, index) => (
-        <WordLetter key={index} status={status} />
-      ))}
-    </div>
-  );
-};
-
-const WordLetter: React.FC<{ status: CharacterStatus }> = ({ status }) => {
-  const color = useMemo(
-    () =>
-      status.inWord ? (status.inPosition ? "green" : "yellow") : "#dddddd",
-    [status]
-  );
-  const style = useMemo<CSSProperties>(() => {
-    return {
-      display: "flex",
-      flex: 1,
-      padding: "15px 15px",
-      margin: 3,
-      border: "1px solid black",
-      borderRadius: 4,
-      justifyContent: "center",
-      backgroundColor: color,
-    };
-  }, [color]);
-
-  return <div style={style}>{status.character}</div>;
 };
 
 export default Game;

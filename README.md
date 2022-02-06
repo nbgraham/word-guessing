@@ -1,16 +1,31 @@
 [![Node.js CI](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml/badge.svg)](https://github.com/nbgraham/word-guessing/actions/workflows/ci.yml)
 
-## Dependencies
+# Word Guessing
 
-[Datamuse API](https://www.datamuse.com/api/)
+A word guessing game
 
-- Validate that words are real words
-- Get definitions
-- "Randomly" pick answer
+## Development Setup
 
-# Getting Started with Create React App
+It is recommended to use [nvm](https://github.com/nvm-sh/nvm) to ensure all development is done on the same node version. This repo contains a `.nvmrc` file specifying the version.  
+Please use [Prettier](https://prettier.io/) to format all files. This repo contains a `.prettierrc` file specifying the formatting config.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Deployment
+
+This project is deployed using [Github Pages](https://pages.github.com/).  
+This repo has CI/CD setup using [GitHub Actions](https://github.com/features/actions). To deploy to production, merge from `develop` into `master`.
+
+## Main Dependencies
+
+- This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started). To learn React, check out the [React documentation](https://reactjs.org/).
+
+- Uses [Redux Toolkit](https://redux-toolkit.js.org/usage/usage-guide) for state management.
+
+- Uses [React Router](https://reactrouter.com/docs/en/v6) for URL path management.
+
+- Calls [Datamuse API](https://www.datamuse.com/api/) to
+  - Validate that words are real words
+  - Get definitions
+  - "Randomly" pick an answer for each game
 
 ## Available Scripts
 
@@ -28,29 +43,3 @@ You will also see any lint errors in the console.
 
 Launches the test runner in the interactive watch mode.\
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).

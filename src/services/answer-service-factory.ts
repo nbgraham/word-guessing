@@ -5,11 +5,13 @@ import {
 } from "./answer-service";
 import { VersionKey } from "../utilities/types";
 import { datamuseApi } from "./datamuse-api";
+import { Encryption } from "../utilities/encryption";
 
 const answerServices: AnswerService[] = [
   new StaticAnswerService(1, datamuseApi, () => import("../assets/knuth-word-bank.json")),
   new StaticAnswerService(2, datamuseApi, () => import("../assets/words-api-word-bank.json")),
-  new DatamuseApiAnswerService(3),
+  new DatamuseApiAnswerService(3, new Encryption(1)),
+  new DatamuseApiAnswerService(4, new Encryption(2)),
 ];
 
 export function getAnswerService(version: VersionKey) {
