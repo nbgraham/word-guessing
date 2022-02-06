@@ -1,3 +1,4 @@
+import { datamuseApi } from "../services/datamuse-api";
 import { unique } from "./array";
 import type { WordStatus } from "./types";
 
@@ -24,6 +25,46 @@ type WordInfo = {
   word: string;
   frequency?: number;
 };
+
+export async function getBestNextGuess(
+  guesses: WordStatus[],
+  eliminatedLetters: string[],
+  foundLetters: string[]
+) {
+  const spelledLike = getWordMatch(guesses);
+
+  const wordsInfo = await datamuseApi.getWordsInfo({
+    spelledLike: spelledLike,
+    metadata: {
+      frequency: true,
+    },
+  });
+  
+  const pastGuesses = guesses.map((guess) =>
+    guess.map((status) => status.character).join("")
+  );
+
+  const bestGuess = chooseBestGuess({
+    wordsInfo,
+    pastGuesses,
+    eliminatedLetters,
+    foundLetters,
+  });
+
+  return bestGuess;
+}
+
+export function getWordMatch(guesses: WordStatus[]) {
+  return new Array(5)
+    .fill(null)
+    .map((_, i) => {
+      const correctLetter = guesses.find(
+        (guess) => guess[i].inPosition && guess[i].inWord
+      );
+      return correctLetter?.[i].character ?? "?";
+    })
+    .join("");
+}
 
 export function chooseBestGuess(options: {
   wordsInfo: WordInfo[];
