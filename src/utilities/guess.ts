@@ -2,6 +2,8 @@ import { datamuseApi } from "../services/datamuse-api";
 import { unique } from "./array";
 import type { WordStatus } from "./types";
 
+const DEFAULT_FIRST_GUESS = "REACT";
+
 export function evaluateGuess(guess: string, answer: string) {
   const answerC = answer.toUpperCase();
   const status: WordStatus = guess
@@ -31,6 +33,10 @@ export async function getBestNextGuess(
   eliminatedLetters: string[],
   foundLetters: string[]
 ) {
+  if (guesses.length === 0) {
+    return DEFAULT_FIRST_GUESS;
+  }
+
   const spelledLike = getWordMatch(guesses);
 
   const wordsInfo = await datamuseApi.getWordsInfo({
@@ -39,7 +45,7 @@ export async function getBestNextGuess(
       frequency: true,
     },
   });
-  
+
   const pastGuesses = guesses.map((guess) =>
     guess.map((status) => status.character).join("")
   );
