@@ -12,6 +12,7 @@ const answerServices: AnswerService[] = [
   new StaticAnswerService(2, datamuseApi, () => import("../assets/words-api-word-bank.json")),
   new DatamuseApiAnswerService(3, new Encryption(1)),
   new DatamuseApiAnswerService(4, new Encryption(2)),
+  new StaticAnswerService(5, datamuseApi, () => import("../assets/wordle-word-bank.json")),
 ];
 
 export function getAnswerService(version: VersionKey) {
