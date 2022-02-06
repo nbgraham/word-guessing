@@ -1,5 +1,6 @@
 import { datamuseApi } from "../services/datamuse-api";
 import { unique } from "./array";
+import { WORD_LENGTH } from "./contants";
 import type { WordStatus } from "./types";
 
 const DEFAULT_FIRST_GUESS = "REACT";
@@ -38,13 +39,7 @@ export async function getBestNextGuess(
   }
 
   const spelledLike = getWordMatcher(guesses);
-
-  const wordsInfo = await datamuseApi.getWordsInfo({
-    spelledLike: spelledLike,
-    metadata: {
-      frequency: true,
-    },
-  });
+  const wordsInfo = await getMatchingWordsInfo(spelledLike);
 
   const pastGuesses = guesses.map((guess) =>
     guess.map((status) => status.character).join("")
@@ -60,8 +55,21 @@ export async function getBestNextGuess(
   return bestGuess;
 }
 
+async function getMatchingWordsInfo(spelledLike: string): Promise<WordInfo[]> {
+  const wordsInfo = await datamuseApi.getWordsInfo({
+    spelledLike: spelledLike,
+    metadata: {
+      frequency: true,
+    },
+  });
+  const wordsWithCorrectLength = wordsInfo.filter(
+    (wordInfo) => wordInfo.word.length === WORD_LENGTH
+  );
+  return wordsWithCorrectLength;
+}
+
 export function getWordMatcher(guesses: WordStatus[]) {
-  return new Array(5)
+  return new Array(WORD_LENGTH)
     .fill(null)
     .map((_, i) => {
       const correctLetter = guesses.find(
@@ -90,12 +98,15 @@ export function chooseBestGuess(options: {
         word: wordInfo.word,
         letters: wordInfo.word.split(""),
         score: 0,
-        frequency: wordInfo.frequency ?? 0,
+        frequency: wordInfo.frequency ?? 0.01,
       };
     })
     .filter((wordInfo) => !contains(pastGuesses, wordInfo.word));
 
+  const maxFreq = Math.max(...guessScores.map((g) => g.frequency));
+
   guessScores.forEach((guess) => {
+    guess.score += Math.min(0.75, guess.frequency / maxFreq);
     foundLetters.forEach((foundLetter) => {
       if (contains(guess.letters, foundLetter)) {
         guess.score++;
@@ -118,5 +129,6 @@ export function chooseBestGuess(options: {
 
   guessScores.sort((a, b) => b.score - a.score || b.frequency - a.frequency);
 
+  console.debug('Sorted guess scores', guessScores);
   return guessScores[0]?.word;
 }
