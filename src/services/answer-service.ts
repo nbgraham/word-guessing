@@ -5,13 +5,56 @@ import { makeQueryGenerator } from "../utilities/query-generator";
 import { VersionKey, WordBank, WordValidator } from "../utilities/types";
 import { datamuseApi } from "./datamuse-api";
 
+class PrevAnswers {
+  answers: string[];
+  key = "PREV_ANSWERS";
+  maxLength = 100;
+
+  constructor() {
+    this.answers = this._get();
+  }
+
+  addAnswer(answer: string) {
+    this.answers.push(answer);
+    if (this.answers.length > this.maxLength) {
+      this.answers = this.answers.slice(this.answers.length - this.maxLength);
+    }
+    this._save(this.answers);
+  }
+
+  isAPrevAnswer(answer: string) {
+    return this.answers.includes(answer);
+  }
+
+  private _get() {
+    return JSON.parse(window.sessionStorage.getItem(this.key) || "[]");
+  }
+  private _save(answers: string[]) {
+    window.sessionStorage.setItem(this.key, JSON.stringify(answers));
+  }
+}
+
 abstract class AnswerService {
   version: VersionKey;
+  prevAnswers = new PrevAnswers();
+
   constructor(version: VersionKey) {
     this.version = version;
   }
 
-  abstract getNewAnswerKey(
+  async getNewAnswerKey(mustBeValidWord: boolean): Promise<string | undefined> {
+    for (let i = 0; i < 50; i++) {
+      const answerKey = await this._getNewAnswerKey(mustBeValidWord);
+      const answer = answerKey && (await this.getAnswer(answerKey));
+      if (answer && !this.prevAnswers.isAPrevAnswer(answer)) {
+        this.prevAnswers.addAnswer(answer);
+        return answerKey;
+      }
+    }
+    console.warn("Could not find a new unique answer");
+  }
+
+  abstract _getNewAnswerKey(
     mustBeValidWord: boolean
   ): Promise<string | undefined>;
   abstract getAnswer(answerKey: string): Promise<string | undefined>;
@@ -32,7 +75,9 @@ export class StaticAnswerService extends AnswerService {
     this.getWordBank = getWordBank;
   }
 
-  async getNewAnswerKey(mustBeValidWord: boolean): Promise<string | undefined> {
+  async _getNewAnswerKey(
+    mustBeValidWord: boolean
+  ): Promise<string | undefined> {
     const wordBank = await this.getWordBank();
     const words = wordBank.words;
 
@@ -74,7 +119,7 @@ export class DatamuseApiAnswerService extends AnswerService {
     this.queryGenerator = makeQueryGenerator();
   }
 
-  async getNewAnswerKey(): Promise<string | undefined> {
+  async _getNewAnswerKey(): Promise<string | undefined> {
     let tries = 0;
     while (tries < 10) {
       tries++;
