@@ -1,6 +1,7 @@
 import { random } from "../utilities/array";
 import { WORD_LENGTH } from "../utilities/contants";
 import { Encryption } from "../utilities/encryption";
+import { makeQueryGenerator } from "../utilities/query-generator";
 import { VersionKey, WordBank, WordValidator } from "../utilities/types";
 import { datamuseApi } from "./datamuse-api";
 
@@ -64,10 +65,12 @@ export class StaticAnswerService extends AnswerService {
 export class DatamuseApiAnswerService extends AnswerService {
   encryption: Encryption;
   minFrequency = 10;
+  queryGenerator: () => string;
 
   constructor(version: VersionKey, encryption: Encryption) {
     super(version);
     this.encryption = encryption;
+    this.queryGenerator = makeQueryGenerator();
   }
 
   async getNewAnswerKey(): Promise<string | undefined> {
@@ -75,12 +78,7 @@ export class DatamuseApiAnswerService extends AnswerService {
     while (tries < 10) {
       tries++;
 
-      const randomLetter = this.getRandomLetter();
-      const randomIndex = Math.floor(Math.random() * WORD_LENGTH);
-      const spelledLike = new Array(WORD_LENGTH)
-        .fill(null)
-        .map((_, i) => (i === randomIndex ? randomLetter : "?"))
-        .join("");
+      const spelledLike = this.queryGenerator();
 
       const wordsInfo = await datamuseApi.getWordsInfo({
         spelledLike,
