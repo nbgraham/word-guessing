@@ -66,6 +66,7 @@ export class DatamuseApiAnswerService extends AnswerService {
   encryption: Encryption;
   minFrequency = 10;
   queryGenerator: () => string;
+  wordRegex = new RegExp(`^[a-zA-Z]{${WORD_LENGTH}}$`);
 
   constructor(version: VersionKey, encryption: Encryption) {
     super(version);
@@ -95,9 +96,7 @@ export class DatamuseApiAnswerService extends AnswerService {
           (wordInfo) =>
             wordInfo.frequency && wordInfo.frequency > this.minFrequency
         )
-        .filter((wordInfo) =>
-          new RegExp(`^[a-zA-Z]{${WORD_LENGTH}}$`).test(wordInfo.word)
-        );
+        .filter((wordInfo) => this.wordRegex.test(wordInfo.word));
 
       const chosenWordInfo = random(frequentWords);
       const word = chosenWordInfo?.word;
