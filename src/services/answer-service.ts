@@ -1,16 +1,32 @@
 import { random } from "../utilities/array";
 import { WORD_LENGTH } from "../utilities/contants";
 import { Encryption } from "../utilities/encryption";
+import { makeQueryGenerator } from "../utilities/query-generator";
 import { VersionKey, WordBank, WordValidator } from "../utilities/types";
+import { AnswerHistory } from "./answer-history";
 import { datamuseApi } from "./datamuse-api";
 
 abstract class AnswerService {
   version: VersionKey;
+  answerHistory = new AnswerHistory();
+
   constructor(version: VersionKey) {
     this.version = version;
   }
 
-  abstract getNewAnswerKey(
+  async getNewAnswerKey(mustBeValidWord: boolean): Promise<string | undefined> {
+    for (let i = 0; i < 50; i++) {
+      const answerKey = await this._getNewAnswerKey(mustBeValidWord);
+      const answer = answerKey && (await this.getAnswer(answerKey));
+      if (answer && !this.answerHistory.isAPrevAnswer(answer)) {
+        this.answerHistory.addAnswer(answer);
+        return answerKey;
+      }
+    }
+    console.warn("Could not find a new unique answer");
+  }
+
+  abstract _getNewAnswerKey(
     mustBeValidWord: boolean
   ): Promise<string | undefined>;
   abstract getAnswer(answerKey: string): Promise<string | undefined>;
@@ -31,7 +47,9 @@ export class StaticAnswerService extends AnswerService {
     this.getWordBank = getWordBank;
   }
 
-  async getNewAnswerKey(mustBeValidWord: boolean): Promise<string | undefined> {
+  async _getNewAnswerKey(
+    mustBeValidWord: boolean
+  ): Promise<string | undefined> {
     const wordBank = await this.getWordBank();
     const words = wordBank.words;
 
@@ -64,23 +82,21 @@ export class StaticAnswerService extends AnswerService {
 export class DatamuseApiAnswerService extends AnswerService {
   encryption: Encryption;
   minFrequency = 10;
+  queryGenerator: () => string;
+  wordRegex = new RegExp(`^[a-zA-Z]{${WORD_LENGTH}}$`);
 
   constructor(version: VersionKey, encryption: Encryption) {
     super(version);
     this.encryption = encryption;
+    this.queryGenerator = makeQueryGenerator();
   }
 
-  async getNewAnswerKey(): Promise<string | undefined> {
+  async _getNewAnswerKey(): Promise<string | undefined> {
     let tries = 0;
     while (tries < 10) {
       tries++;
 
-      const randomLetter = this.getRandomLetter();
-      const randomIndex = Math.floor(Math.random() * WORD_LENGTH);
-      const spelledLike = new Array(WORD_LENGTH)
-        .fill(null)
-        .map((_, i) => (i === randomIndex ? randomLetter : "?"))
-        .join("");
+      const spelledLike = this.queryGenerator();
 
       const wordsInfo = await datamuseApi.getWordsInfo({
         spelledLike,
@@ -97,9 +113,7 @@ export class DatamuseApiAnswerService extends AnswerService {
           (wordInfo) =>
             wordInfo.frequency && wordInfo.frequency > this.minFrequency
         )
-        .filter((wordInfo) =>
-          new RegExp(`^[a-zA-Z]{${WORD_LENGTH}}$`).test(wordInfo.word)
-        );
+        .filter((wordInfo) => this.wordRegex.test(wordInfo.word));
 
       const chosenWordInfo = random(frequentWords);
       const word = chosenWordInfo?.word;
