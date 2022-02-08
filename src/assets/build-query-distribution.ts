@@ -1,3 +1,4 @@
+// Not used at runtime, just historical record of how query-distribution.json was made
 import wordBank from "./wordle-word-bank.json";
 
 const letters = "qwertyuiopasdfghjklzxcvbnm";
@@ -13,7 +14,6 @@ export default function buildDistribution(length = 5) {
     {} as Record<string, number>
   );
 
-  console.log(matchCount);
   return matchCount;
 }
 
