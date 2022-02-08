@@ -1,5 +1,7 @@
 import { getRandomGenerator } from "./random";
 
+// https://github.com/peoplenarthax/jest-mock-random
+
 // Copy the global Math object in order to reset it
 const mathCopy = Object.create(global.Math);
 const resetMockRandom = () => {
