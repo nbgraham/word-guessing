@@ -3,40 +3,12 @@ import { WORD_LENGTH } from "../utilities/contants";
 import { Encryption } from "../utilities/encryption";
 import { makeQueryGenerator } from "../utilities/query-generator";
 import { VersionKey, WordBank, WordValidator } from "../utilities/types";
+import { AnswerHistory } from "./answer-history";
 import { datamuseApi } from "./datamuse-api";
-
-class PrevAnswers {
-  answers: string[];
-  key = "PREV_ANSWERS";
-  maxLength = 100;
-
-  constructor() {
-    this.answers = this._get();
-  }
-
-  addAnswer(answer: string) {
-    this.answers.push(answer);
-    if (this.answers.length > this.maxLength) {
-      this.answers = this.answers.slice(this.answers.length - this.maxLength);
-    }
-    this._save(this.answers);
-  }
-
-  isAPrevAnswer(answer: string) {
-    return this.answers.includes(answer);
-  }
-
-  private _get() {
-    return JSON.parse(window.sessionStorage.getItem(this.key) || "[]");
-  }
-  private _save(answers: string[]) {
-    window.sessionStorage.setItem(this.key, JSON.stringify(answers));
-  }
-}
 
 abstract class AnswerService {
   version: VersionKey;
-  prevAnswers = new PrevAnswers();
+  answerHistory = new AnswerHistory();
 
   constructor(version: VersionKey) {
     this.version = version;
@@ -46,8 +18,8 @@ abstract class AnswerService {
     for (let i = 0; i < 50; i++) {
       const answerKey = await this._getNewAnswerKey(mustBeValidWord);
       const answer = answerKey && (await this.getAnswer(answerKey));
-      if (answer && !this.prevAnswers.isAPrevAnswer(answer)) {
-        this.prevAnswers.addAnswer(answer);
+      if (answer && !this.answerHistory.isAPrevAnswer(answer)) {
+        this.answerHistory.addAnswer(answer);
         return answerKey;
       }
     }
