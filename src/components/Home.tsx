@@ -3,16 +3,14 @@ import { evaluateGuess } from "../utilities/guess";
 import NewGame from "./NewGame";
 import WordResult from "./WordResult";
 
+const exampleAnswer = "SPARE";
+const exampleGuesses = ["TRITE", "HAIRS", "PEARS", "SHARE", "SPARE"];
+
 const Home: React.FC = () => {
-  const exampleAnswer = "spare";
-  const exampleGuesses = useMemo(
-    () => ["trite", "hairs", "pears", "share", "spare"],
-    []
-  );
   const exampleResults = useMemo(
     () =>
       exampleGuesses.map((guess) => evaluateGuess(guess, exampleAnswer).status),
-    [exampleAnswer, exampleGuesses]
+    []
   );
 
   return (
@@ -24,8 +22,8 @@ const Home: React.FC = () => {
         <li>No color (gray) means the letter is not in the word</li>
       </ul>
       <div style={{ margin: 10 }}>
-        For example, if the answer were "SHARE", this is how these guesses would
-        be displayed:
+        For example, if the answer were "{exampleAnswer}", this is how these
+        guesses would be displayed:
         {exampleResults.map((exampleResult, i) => (
           <WordResult key={i} guessStatus={exampleResult} />
         ))}
