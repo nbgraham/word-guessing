@@ -1,5 +1,4 @@
 import { datamuseApi } from "../services/datamuse-api";
-import { unique } from "./array";
 import { WORD_LENGTH } from "./contants";
 import type { WordStatus } from "./types";
 
