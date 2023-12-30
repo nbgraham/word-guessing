@@ -6,22 +6,50 @@ import type { WordStatus } from "./types";
 const DEFAULT_FIRST_GUESS = "REACT";
 
 export function evaluateGuess(guess: string, answer: string) {
-  const answerC = answer.toUpperCase();
-  const status: WordStatus = guess
-    .toUpperCase()
-    .split("")
-    .map((character, i) => ({
-      character,
-      inWord: answerC.includes(character),
-      inPosition: answerC[i] === character,
-    }));
-  const eliminatedLetters = unique(
-    status.filter((s) => !s.inWord).map((s) => s.character)
+  const answerLetters = answer.toUpperCase().split("");
+  const guessLetters = guess.toUpperCase().split("");
+
+  const countOfLettersInAnswer = answerLetters.reduce<Record<string, number>>(
+    (agg, cur) => {
+      agg[cur] = (agg[cur] || 0) + 1;
+      return agg;
+    },
+    {}
   );
-  const foundLetters = unique(
-    status.filter((s) => s.inWord).map((s) => s.character)
-  );
-  return { eliminatedLetters, foundLetters, status };
+
+  const status = guessLetters.map((c) => ({
+    character: c,
+    inWord: false,
+    inPosition: false,
+  }));
+  status.forEach((res, i) => {
+    if (res.character === answerLetters[i]) {
+      res.inWord = true;
+      res.inPosition = true;
+      countOfLettersInAnswer[res.character]--;
+    }
+  });
+  status.filter(s => !s.inPosition).forEach((res) => {
+    if (countOfLettersInAnswer[res.character]-- > 0) {
+      res.inWord = true;
+    }
+  });
+
+  const found = new Set<string>();
+  const eliminated = new Set<string>(guessLetters);
+  status.forEach((r) => {
+    if (r.inWord) {
+      if (eliminated.delete(r.character)) {
+        found.add(r.character);
+      }
+    }
+  });
+
+  return {
+    eliminatedLetters: Array.from(eliminated),
+    foundLetters: Array.from(found),
+    status: status,
+  };
 }
 
 type WordInfo = {
